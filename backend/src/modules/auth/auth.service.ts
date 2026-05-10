@@ -1,3 +1,9 @@
+<<<<<<< HEAD
+import { Injectable } from '@nestjs/common';
+
+@Injectable()
+export class AuthService {}
+=======
 import { JwtService } from '@nestjs/jwt';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { signinDTO, signupDTO } from './dtos/auth';
@@ -57,3 +63,4 @@ export class AuthService {
         };
     }
 }
+>>>>>>> 9e6028bf3fc03ed64d4819a32ffd0ed2d89513de

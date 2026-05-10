@@ -7,7 +7,10 @@ import { DisciplineModule } from './disciplina/discipline.module';
 import { DisciplineController } from './disciplina/discipline.controller';
 import { UploadModule } from './modules/upload/upload.module';
 import { AuthModule } from './modules/auth/auth.module';
+<<<<<<< HEAD
+=======
 import { PrismaService } from './prisma/prisma.service';
+>>>>>>> 9e6028bf3fc03ed64d4819a32ffd0ed2d89513de
 
 @Module({
   imports: [
@@ -26,6 +29,19 @@ import { PrismaService } from './prisma/prisma.service';
       migrations: [`${__dirname}/migration/*.{ts,js}`],
       migrationsRun: true,
     }),
+<<<<<<< HEAD
+
+    UserModule,
+
+    DisciplineModule,
+
+    UploadModule,
+
+    AuthModule,
+  ],
+  controllers: [DisciplineController],
+  providers: [],
+=======
     UserModule,
     DisciplineModule,
     UploadModule,
@@ -33,5 +49,6 @@ import { PrismaService } from './prisma/prisma.service';
   ],
   controllers: [DisciplineController],
   providers: [PrismaService],
+>>>>>>> 9e6028bf3fc03ed64d4819a32ffd0ed2d89513de
 })
 export class AppModule {}
