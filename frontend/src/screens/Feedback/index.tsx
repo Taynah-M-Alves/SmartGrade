@@ -15,11 +15,11 @@ import ProgressCard from "../../components/ProgressCard";
 import UploadCard from "../../components/UploadCard";
 import BottomNav from "../../components/BottomNav";
 
-import { styles } from "./styles";
+import { styles } from "./style";
 
 export default function Home() {
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.scoreContainer}>
       <StatusBar style="dark" />
 
       <ScrollView

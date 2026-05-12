@@ -5,21 +5,22 @@ import {
   Image,
 } from "react-native";
 
-import { styles } from "../screens/Home/stylesComponents";
+import { globalStyles } from "../screens/Feedback/style";
 
 export default function UploadCard() {
   return (
-    <View style={styles.imageCard}>
+    <View style={globalStyles.imageCard}>
       <Image
         source={{
           uri: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=1200",
         }}
-        style={styles.image}
+        style={globalStyles.image}
       />
 
-      <View style={styles.overlay}>
-        <Text style={styles.overlayText}>
-          Visualizando seu progresso.
+      <View style={globalStyles.overlay}>
+        <Text style={globalStyles.overlayText}>
+          Visualizando seu progresso ao
+          longo do semestre.
         </Text>
       </View>
     </View>

@@ -9,15 +9,15 @@ import { LinearGradient } from "expo-linear-gradient";
 
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
-import { styles } from "../screens/Feedback/style";
+import { globalStyles } from "../screens/Feedback/style";
 
 export default function TipsCard() {
   return (
-    <View style={styles.card}>
-      <View style={styles.cardHeader}>
+    <View style={globalStyles.card}>
+      <View style={globalStyles.cardHeader}>
         <View
           style={[
-            styles.iconBox,
+            globalStyles.iconBox,
             { backgroundColor: "#F8EBFF" },
           ]}
         >
@@ -28,16 +28,76 @@ export default function TipsCard() {
           />
         </View>
 
-        <Text style={styles.cardTitle}>Sugestões</Text>
+        <Text style={globalStyles.cardTitle}>
+          Sugestões
+        </Text>
       </View>
+
+      <View
+        style={{
+          backgroundColor: "#F3D8FF",
+          alignSelf: "flex-start",
+          paddingHorizontal: 14,
+          paddingVertical: 8,
+          borderRadius: 30,
+          marginBottom: 20,
+        }}
+      >
+        <Text
+          style={{
+            color: "#9C27B0",
+            fontWeight: "700",
+          }}
+        >
+          RECOMENDADO POR IA
+        </Text>
+      </View>
+
+      <Text
+        style={{
+          fontSize: 18,
+          lineHeight: 32,
+          color: "#333",
+        }}
+      >
+        Tente usar conectivos mais
+        variados como{" "}
+        <Text
+          style={{
+            color: "#9C27B0",
+            fontWeight: "700",
+          }}
+        >
+          "Além disso"
+        </Text>
+        ,{" "}
+        <Text
+          style={{
+            color: "#9C27B0",
+            fontWeight: "700",
+          }}
+        >
+          "Por outro lado"
+        </Text>{" "}
+        ou{" "}
+        <Text
+          style={{
+            color: "#9C27B0",
+            fontWeight: "700",
+          }}
+        >
+          "À luz destas descobertas"
+        </Text>
+        .
+      </Text>
 
       <TouchableOpacity activeOpacity={0.8}>
         <LinearGradient
           colors={["#2F5BB7", "#9C27B0"]}
-          style={styles.button}
+          style={globalStyles.button}
         >
-          <Text style={styles.buttonText}>
-            Gerar Exemplos
+          <Text style={globalStyles.buttonText}>
+            Gerar Exemplos de Transição
           </Text>
         </LinearGradient>
       </TouchableOpacity>

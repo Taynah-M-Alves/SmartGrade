@@ -1,8 +1,8 @@
 
 import SubmitScreen from './src/screens/SubmitScreen';
-import TelaLogin from './src/screens/Login/index';
+// import TelaLogin from './src/screens/Login/index';
 
 export default function App() {
-  return <TelaLogin />;
+  return <SubmitScreen />;
 }
 

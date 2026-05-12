@@ -6,15 +6,15 @@ import {
 
 import Feather from "@expo/vector-icons/Feather";
 
-import { styles } from "../screens/Feedback/style";
+import { globalStyles } from "../screens/Feedback/style";
 
 export default function DetailsCard() {
   return (
-    <View style={styles.card}>
-      <View style={styles.cardHeader}>
+    <View style={globalStyles.card}>
+      <View style={globalStyles.cardHeader}>
         <View
           style={[
-            styles.iconBox,
+            globalStyles.iconBox,
             { backgroundColor: "#FDECEC" },
           ]}
         >
@@ -25,18 +25,33 @@ export default function DetailsCard() {
           />
         </View>
 
-        <Text style={styles.cardTitle}>
+        <Text style={globalStyles.cardTitle}>
           Pontos a Melhorar
         </Text>
       </View>
 
-      <View style={styles.quoteBox}>
-        <View style={styles.quoteBar} />
+      <View style={globalStyles.quoteBox}>
+        <View style={globalStyles.quoteBar} />
 
-        <Text style={styles.quoteText}>
-          "Melhorar a fluidez entre os parágrafos."
+        <Text style={globalStyles.quoteText}>
+          "Melhorar a fluidez entre os
+          parágrafos 2 e 3."
         </Text>
       </View>
+
+      <Text
+        style={{
+          marginTop: 20,
+          fontSize: 16,
+          lineHeight: 28,
+          color: "#666",
+        }}
+      >
+        A transição atual parece abrupta,
+        passando do contexto histórico
+        para a aplicação moderna sem
+        uma ponte temática clara.
+      </Text>
     </View>
   );
 }

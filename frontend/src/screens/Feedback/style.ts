@@ -1,17 +1,42 @@
 import { StyleSheet } from "react-native";
 
+export const colors = {
+  primary: "#2F5BB7",
+  secondary: "#9C27B0",
+
+  background: "#F4F5FA",
+  white: "#FFFFFF",
+
+  text: "#222222",
+  gray: "#666666",
+  lightGray: "#E5E7EB",
+
+  success: "#22C55E",
+  danger: "#EF4444",
+  warning: "#F59E0B",
+
+  purpleLight: "#F3E8FF",
+  blueLight: "#EEF3FF",
+};
+
 export const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+
     paddingHorizontal: 20,
-    marginTop: 20,  
+    marginTop: 20,
   },
+
   logo: {
     fontSize: 22,
     fontWeight: "800",
-    color: "#2F5BB7",
+    color: colors.primary,
   },
 
   headerRight: {
@@ -24,13 +49,13 @@ export const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "700",
     textAlign: "right",
-    color: "#333",
+    color: colors.text,
   },
 
   avatar: {
     width: 45,
     height: 45,
-    borderRadius: 22,
+    borderRadius: 30,
   },
 
   scoreContainer: {
@@ -39,84 +64,106 @@ export const styles = StyleSheet.create({
   },
 
   circle: {
-    width: 180,
-    height: 180,
-    borderRadius: 90,
+    width: 190,
+    height: 190,
+    borderRadius: 100,
+
     justifyContent: "center",
     alignItems: "center",
   },
 
   innerCircle: {
-    width: 145,
-    height: 145,
-    borderRadius: 80,
-    backgroundColor: "#F4F5FA",
+    width: 155,
+    height: 155,
+    borderRadius: 90,
+
+    backgroundColor: colors.background,
+
     justifyContent: "center",
     alignItems: "center",
   },
 
   score: {
-    fontSize: 52,
+    fontSize: 56,
     fontWeight: "900",
-    color: "#000",
+    color: colors.text,
   },
 
   scoreLabel: {
+    marginTop: 4,
+
     fontSize: 14,
-    letterSpacing: 2,
-    color: "#555",
+    letterSpacing: 3,
+
+    color: colors.gray,
   },
 
   title: {
     textAlign: "center",
-    marginTop: 20,
-    fontSize: 32,
+
+    marginTop: 24,
+
+    fontSize: 34,
     fontWeight: "900",
-    color: "#111",
+
+    color: colors.text,
   },
 
   description: {
     textAlign: "center",
-    marginHorizontal: 30,
-    marginTop: 12,
-    fontSize: 18,
-    lineHeight: 30,
-    color: "#666",
+
+    marginHorizontal: 28,
+    marginTop: 16,
+
+    fontSize: 20,
+    lineHeight: 34,
+
+    color: colors.gray,
   },
 
   card: {
-    backgroundColor: "#FFF",
+    backgroundColor: colors.white,
+
     marginHorizontal: 16,
-    marginTop: 22,
-    borderRadius: 20,
-    padding: 20,
+    marginTop: 24,
+
+    borderRadius: 24,
+
+    padding: 22,
 
     shadowColor: "#000",
     shadowOpacity: 0.08,
-    shadowRadius: 10,
+    shadowRadius: 12,
+
     elevation: 4,
   },
 
   cardHeader: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 18,
+
+    marginBottom: 22,
   },
 
   iconBox: {
-    width: 50,
-    height: 50,
-    borderRadius: 14,
+    width: 54,
+    height: 54,
+
+    borderRadius: 16,
+
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#EEF3FF",
+
+    backgroundColor: colors.blueLight,
+
     marginRight: 14,
   },
 
   cardTitle: {
-    fontSize: 22,
+    fontSize: 24,
     fontWeight: "800",
-    color: "#222",
+
+    color: colors.text,
   },
 
   bulletContainer: {
@@ -125,135 +172,186 @@ export const styles = StyleSheet.create({
   },
 
   bullet: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: "#2F5BB7",
-    marginTop: 8,
-    marginRight: 10,
+    width: 10,
+    height: 10,
+
+    borderRadius: 10,
+
+    backgroundColor: colors.primary,
+
+    marginTop: 10,
+    marginRight: 14,
   },
 
   bulletText: {
     flex: 1,
-    fontSize: 16,
-    lineHeight: 28,
-    color: "#555",
+
+    fontSize: 18,
+    lineHeight: 34,
+
+    color: colors.gray,
   },
 
   quoteBox: {
-    backgroundColor: "#F4F4F8",
-    borderRadius: 18,
+    backgroundColor: "#F5F5FA",
+
+    borderRadius: 20,
+
     flexDirection: "row",
+
     overflow: "hidden",
-    paddingVertical: 20,
+
+    paddingVertical: 24,
   },
 
   quoteBar: {
-    width: 5,
+    width: 6,
+
     backgroundColor: "#3B43FF",
-    marginRight: 14,
-    marginLeft: 12,
+
+    marginLeft: 14,
+    marginRight: 18,
+
     borderRadius: 10,
   },
 
   quoteText: {
     flex: 1,
-    fontSize: 20,
+
+    fontSize: 22,
+    lineHeight: 38,
+
     fontStyle: "italic",
-    color: "#333",
-    paddingRight: 18,
-    lineHeight: 34,
+
+    color: colors.text,
+
+    paddingRight: 20,
   },
 
   button: {
-    marginTop: 24,
+    marginTop: 28,
+
     paddingVertical: 18,
-    borderRadius: 16,
+
+    borderRadius: 18,
+
     alignItems: "center",
   },
 
   buttonText: {
-    color: "#FFF",
+    color: colors.white,
+
     fontSize: 18,
     fontWeight: "800",
   },
 
   statsTitle: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: "900",
-    marginBottom: 20,
+
+    marginBottom: 24,
+
     color: "#666",
   },
 
   statRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 10,
+
+    marginBottom: 12,
   },
 
   statLabel: {
-    fontSize: 18,
+    fontSize: 20,
     color: "#444",
   },
 
   statValue: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: "800",
-    color: "#111",
+
+    color: colors.text,
   },
 
   progressBar: {
     width: "100%",
-    height: 10,
-    backgroundColor: "#E5E7EB",
-    borderRadius: 10,
+    height: 12,
+
+    backgroundColor: colors.lightGray,
+
+    borderRadius: 20,
+
     overflow: "hidden",
   },
 
   progressFill: {
     height: "100%",
-    backgroundColor: "#2F5BB7",
-    borderRadius: 10,
+
+    backgroundColor: colors.primary,
+
+    borderRadius: 20,
   },
 
   imageCard: {
     marginHorizontal: 16,
-    marginTop: 22,
+    marginTop: 24,
+
     borderRadius: 24,
+
     overflow: "hidden",
-    marginBottom: 120,
+
+    marginBottom: 140,
   },
 
   image: {
     width: "100%",
-    height: 240,
+    height: 260,
   },
 
   overlay: {
     position: "absolute",
+
     bottom: 0,
+
     width: "100%",
-    backgroundColor: "rgba(0,0,0,0.25)",
-    padding: 16,
+
+    backgroundColor: "rgba(0,0,0,0.35)",
+
+    padding: 18,
   },
 
   overlayText: {
-    color: "#FFF",
-    fontSize: 16,
+    color: colors.white,
+
+    fontSize: 18,
     fontWeight: "600",
   },
 
   tabBar: {
     position: "absolute",
+
     bottom: 0,
+
     width: "100%",
-    backgroundColor: "#FFF",
+
+    backgroundColor: colors.white,
+
     flexDirection: "row",
+
     justifyContent: "space-around",
+
     alignItems: "center",
-    paddingVertical: 14,
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
+
+    paddingVertical: 16,
+
+    borderTopLeftRadius: 28,
+    borderTopRightRadius: 28,
+
+    shadowColor: "#000",
+    shadowOpacity: 0.08,
+    shadowRadius: 10,
+
+    elevation: 10,
   },
 
   tabItem: {
@@ -261,21 +359,30 @@ export const styles = StyleSheet.create({
   },
 
   tabText: {
-    marginTop: 4,
-    color: "#999",
+    marginTop: 6,
+
+    color: "#9BA3B5",
+
     fontSize: 12,
+    fontWeight: "600",
   },
 
   activeTab: {
     paddingHorizontal: 28,
     paddingVertical: 14,
+
     borderRadius: 18,
+
     alignItems: "center",
   },
 
   activeTabText: {
-    color: "#FFF",
-    fontWeight: "700",
+    color: colors.white,
+
     marginTop: 4,
+
+    fontWeight: "700",
   },
 });
+
+export const globalStyles = styles;
