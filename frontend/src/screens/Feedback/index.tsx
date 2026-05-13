@@ -2,6 +2,7 @@ import React from "react";
 import {
   SafeAreaView,
   ScrollView,
+  View,
 } from "react-native";
 
 import { StatusBar } from "expo-status-bar";
@@ -19,12 +20,12 @@ import { styles } from "./style";
 
 export default function Home() {
   return (
-    <SafeAreaView style={styles.scoreContainer}>
+     <View style={{ flex: 1}}>
       <StatusBar style="dark" />
 
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 220 }}
+        contentContainerStyle={{ paddingBottom: 320 }}
       >
         <Header />
 
@@ -39,9 +40,11 @@ export default function Home() {
         <ProgressCard />
 
         <UploadCard />
+
+        <View style={{ height: 120 }} />
       </ScrollView>
 
       <BottomNav />
-    </SafeAreaView>
+    </View>
   );
 }

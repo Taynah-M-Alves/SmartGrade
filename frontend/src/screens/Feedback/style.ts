@@ -230,7 +230,7 @@ export const styles = StyleSheet.create({
 
   button: {
     marginTop: 24,
-    marginBottom: 20,
+    marginBottom: 140,
 
     paddingVertical: 18,
     borderRadius: 18,
@@ -332,27 +332,8 @@ export const styles = StyleSheet.create({
     position: "absolute",
 
     bottom: 0,
-
-    width: "100%",
-
-    backgroundColor: colors.white,
-
-    flexDirection: "row",
-
-    justifyContent: "space-around",
-
-    alignItems: "center",
-
-    paddingVertical: 16,
-
-    borderTopLeftRadius: 28,
-    borderTopRightRadius: 28,
-
-    shadowColor: "#000",
-    shadowOpacity: 0.08,
-    shadowRadius: 10,
-
-    elevation: 10,
+    left: 0,
+    right: 0,
   },
 
   tabItem: {
