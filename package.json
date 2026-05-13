@@ -19,8 +19,10 @@
   },
   "homepage": "https://github.com/Taynah-M-Alves/SmartGrade#readme",
   "dependencies": {
+    "expo": "^55.0.23",
     "prisma": "^7.8.0"
+  },
+  "devDependencies": {
+    "typescript": "~5.9.2"
   }
 }
-  
-

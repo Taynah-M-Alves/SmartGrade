@@ -186,7 +186,7 @@ export const styles = StyleSheet.create({
   bulletText: {
     flex: 1,
 
-    fontSize: 18,
+    fontSize: 20,
     lineHeight: 34,
 
     color: colors.gray,
@@ -229,13 +229,14 @@ export const styles = StyleSheet.create({
   },
 
   button: {
-    marginTop: 28,
+    marginTop: 24,
+    marginBottom: 20,
 
     paddingVertical: 18,
-
     borderRadius: 18,
 
     alignItems: "center",
+    justifyContent: "center",
   },
 
   buttonText: {

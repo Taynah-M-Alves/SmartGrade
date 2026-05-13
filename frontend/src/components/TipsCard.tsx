@@ -56,7 +56,7 @@ export default function TipsCard() {
       <Text
         style={{
           fontSize: 18,
-          lineHeight: 32,
+          lineHeight: 28,
           color: "#333",
         }}
       >

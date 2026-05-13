@@ -24,7 +24,7 @@ export default function Home() {
 
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 140 }}
+        contentContainerStyle={{ paddingBottom: 220 }}
       >
         <Header />
 
