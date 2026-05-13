@@ -300,7 +300,7 @@ export const styles = StyleSheet.create({
 
     overflow: "hidden",
 
-    marginBottom: 140,
+    marginBottom: 24,
   },
 
   image: {
