@@ -1,13 +1,15 @@
 import { Module } from '@nestjs/common';
-import { UserModule } from './user/user.module';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { DisciplineService } from './disciplina/discipline.service';
-import { DisciplineModule } from './disciplina/discipline.module';
-import { DisciplineController } from './disciplina/discipline.controller';
+// import { DisciplineService } from './disciplina/discipline.service';
+// import { DisciplineModule } from './disciplina/discipline.module';
+// import { DisciplineController } from './disciplina/discipline.controller';
 import { UploadModule } from './modules/upload/upload.module';
 import { AuthModule } from './modules/auth/auth.module';
-import { PrismaService } from './prisma/prisma.service';
+// import { PrismaService } from './prisma/prisma.service';
+import { TasksModule } from './modules/tasks/tasks.module';
+import { PrismaModule } from './prisma/prisma.module';
+import { TaskSubmissionModule } from './modules/task-submission/task-submission.module';
 
 @Module({
   imports: [
@@ -26,12 +28,14 @@ import { PrismaService } from './prisma/prisma.service';
       migrations: [`${__dirname}/migration/*.{ts,js}`],
       migrationsRun: true,
     }),
-    UserModule,
-    DisciplineModule,
+    // DisciplineModule,
     UploadModule,
     AuthModule,
+    TasksModule,
+    PrismaModule,
+    TaskSubmissionModule,
   ],
-  controllers: [DisciplineController],
-  providers: [PrismaService],
+  // controllers: [DisciplineController],
+  providers: [],
 })
 export class AppModule {}
