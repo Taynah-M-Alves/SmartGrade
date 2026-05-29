@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   SafeAreaView,
   ScrollView,
@@ -17,8 +17,10 @@ import UploadCard from "../../components/UploadCard";
 import BottomNav from "../../components/BottomNav";
 
 import { styles } from "./style";
+import { Button } from "react-native/types_generated/index";
 
 export default function Home() {
+  const [page, setPage] = useState("feedback")
   return (
      <View style={{ flex: 1}}>
       <StatusBar style="dark" />
@@ -28,7 +30,7 @@ export default function Home() {
         contentContainerStyle={{ paddingBottom: 320 }}
       >
         <Header />
-
+        
         <ScoreCard />
 
         <StrengthCard />
@@ -45,6 +47,7 @@ export default function Home() {
       </ScrollView>
 
       <BottomNav />
+      
     </View>
   );
 }

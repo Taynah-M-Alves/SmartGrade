@@ -8,7 +8,8 @@ import Feather from "@expo/vector-icons/Feather";
 
 import { globalStyles } from "../screens/Feedback/style";
 
-export default function DetailsCard() {
+export default function 
+DetailsCard() {
   return (
     <View style={globalStyles.card}>
       <View style={globalStyles.cardHeader}>
