@@ -21,24 +21,33 @@ export default function DeleteCard() {
       </Text>
 
         <View style={styles.infoBox}>
-  <View style={styles.boxContent}>
-    <Text style={styles.infoNumber}>4</Text>
+  <Text style={styles.infoNumber}>4</Text>
 
-    <Text style={styles.infoText}>
-      Rubricas
-    </Text>
-  </View>
+  <Text style={styles.infoText}>
+    Rubricas vinculadas
+  </Text>
+
+  <View style={styles.divider} />
+
+  <Text style={styles.infoSubText}>
+    Serão excluídas permanentemente
+  </Text>
 </View>
 
 <View style={styles.infoBox}>
-  <View style={styles.boxContent}>
-    <Text style={styles.infoNumber}>2</Text>
+  <Text style={styles.infoNumber}>2</Text>
 
-    <Text style={styles.infoText}>
-      Alunos afetados
-    </Text>
-  </View>
+  <Text style={styles.infoText}>
+    Alunos vinculados
+  </Text>
+
+  <View style={styles.divider} />
+
+  <Text style={styles.infoSubText}>
+    Terão os dados desta atividade removidos
+  </Text>
 </View>
     </View>
+
   );
 }
