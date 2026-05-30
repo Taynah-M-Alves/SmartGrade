@@ -1,11 +1,11 @@
 import { ScrollView, Text, StyleSheet } from 'react-native';
-import { colors } from '../styles/colors';
+import { colors } from '../../styles/colors';
 
-import Header from '../components/Header';
-import UploadCard from '../components/UploadCard';
-import ProgressCard from '../components/ProgressCard';
-import DetailsCard from '../components/DetailsCard';
-import TipsCard from '../components/TipsCard';
+import Header from '../../components/Header';
+import UploadCard from '../../components/UploadCard';
+import ProgressCard from '../../components/ProgressCard';
+import DetailsCard from '../../components/DetailsCard';
+import TipsCard from '../../components/TipsCard';
 
 export default function SubmitScreen() {
   return (

@@ -27,8 +27,12 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
+<<<<<<< HEAD
       "expo-router",
       "expo-status-bar"
+=======
+      "expo-router"
+>>>>>>> d44547e970d47e2f6ac87067f1b1660e9e37176d
     ]
   }
 }
