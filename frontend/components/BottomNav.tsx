@@ -4,7 +4,7 @@ import {View,Text,TouchableOpacity} from "react-native";
 import Feather from "@expo/vector-icons/Feather";
 
 import { LinearGradient } from "expo-linear-gradient";
-import { globalStyles, styles } from "app/screens/Feedback/style";
+import { globalStyles, styles } from "app/screens/Feedback/styles";
 
 export default function BottomNav() {
   return (

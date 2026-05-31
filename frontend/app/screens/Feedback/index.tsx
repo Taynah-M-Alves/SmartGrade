@@ -16,7 +16,7 @@ import ProgressCard from "../../../components/ProgressCard";
 import UploadCard from "../../../components/UploadCard";
 import BottomNav from "../../../components/BottomNav";
 
-import { styles } from "./style";
+import { styles } from "./styles";
 
 export default function Home() {
   const [page, setPage] = useState("Feedback")

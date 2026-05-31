@@ -12,7 +12,7 @@ export default function Home() {
 
       <TouchableOpacity
         style={styles.button}
-        onPress={() => router.push("/screens/Feedback")}
+        onPress={() => router.push("/screens/Apagaratividade")}
       >
         <Text style={styles.buttonText}>Ir para Login</Text>
       </TouchableOpacity>

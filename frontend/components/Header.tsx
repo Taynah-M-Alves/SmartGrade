@@ -4,7 +4,7 @@ import {
   Text,
 } from "react-native";
 
-import { globalStyles } from "app/screens/Feedback/style";
+import { globalStyles } from "app/screens/Feedback/styles";
 
 export default function ProgressCard() {
   return (

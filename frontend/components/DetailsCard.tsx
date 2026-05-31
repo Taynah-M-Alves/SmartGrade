@@ -6,7 +6,7 @@ import {
 
 import Feather from "@expo/vector-icons/Feather";
 
-import { globalStyles } from "app/screens/Feedback/style";
+import { globalStyles } from "app/screens/Feedback/styles";
 
 export default function 
 DetailsCard() {

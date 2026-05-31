@@ -9,7 +9,7 @@ import { LinearGradient } from "expo-linear-gradient";
 
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
-import { globalStyles } from "app/screens/Feedback/style";
+import { globalStyles } from "app/screens/Feedback/styles";
 
 export default function TipsCard() {
   return (
