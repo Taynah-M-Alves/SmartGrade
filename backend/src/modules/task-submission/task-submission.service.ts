@@ -77,6 +77,8 @@ export class TaskSubmissionService {
 
           taskId: Number(dto.taskId),
           userId: Number(dto.userId),
+
+          createdById: Number(dto.userId)
         },
       });
 

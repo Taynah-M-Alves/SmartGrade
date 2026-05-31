@@ -7,45 +7,30 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Role {
-  PROFESSOR
-  ALUNO
-}
-
 model User {
-  id       Int    @id @default(autoincrement())
-  name     String
-  email    String @unique
-  password String
-  role     Role
-
-  // Tasks criadas
-  tasks Task[] @relation("UserTasks")
-
-  // Critérios criados
-  criteriaCreated TaskCriteria[] @relation("UserCriteria")
-
-  // Submissões criadas
+  id                 Int              @id @default(autoincrement())
+  name               String
+  email              String           @unique
+  password           String
+  role               Role
+  tasks              Task[]           @relation("UserTasks")
+  criteriaCreated    TaskCriteria[]   @relation("UserCriteria")
   submissionsCreated TaskSubmission[] @relation("UserSubmissions")
-
-  // Submissões feitas pelo aluno
-  submissions TaskSubmission[] @relation("StudentSubmissions")
+  submissions        TaskSubmission[] @relation("StudentSubmissions")
 }
 
 model Task {
-  id          Int      @id @default(autoincrement())
+  id          Int                   @id @default(autoincrement())
   title       String
   description String
-  code        String   @unique
-  createdAt   DateTime @default(now())
+  code        String                @unique
+  createdAt   DateTime              @default(now())
   deadline    DateTime
-
   createdById Int
-  createdBy   User @relation("UserTasks", fields: [createdById], references: [id])
-
+  parameters  ParameterSubmission[]
+  createdBy   User                  @relation("UserTasks", fields: [createdById], references: [id])
   criteria    TaskCriteria[]
   submissions TaskSubmission[]
-  parameters  ParameterSubmission[]
 }
 
 model TaskCriteria {
@@ -54,33 +39,24 @@ model TaskCriteria {
   weight      Float
   description String
   createdAt   DateTime @default(now())
-
-  // usuário que criou
   createdById Int
-  createdBy   User @relation("UserCriteria", fields: [createdById], references: [id])
-
-  taskId Int
-  task   Task @relation(fields: [taskId], references: [id])
+  taskId      Int
+  createdBy   User     @relation("UserCriteria", fields: [createdById], references: [id])
+  task        Task     @relation(fields: [taskId], references: [id])
 }
 
 model TaskSubmission {
-  id         Int      @id @default(autoincrement())
-  fileUrl    String
-  createdAt  DateTime @default(now())
-
-  aiFeedback String?
-  aiGrade    Float?
-
-  // usuário que criou a submissão
+  id          Int      @id @default(autoincrement())
+  fileUrl     String
+  createdAt   DateTime @default(now())
+  aiFeedback  String?
+  aiGrade     Float?
   createdById Int
-  createdBy   User @relation("UserSubmissions", fields: [createdById], references: [id])
-
-  // aluno dono da submissão
-  userId Int
-  user   User @relation("StudentSubmissions", fields: [userId], references: [id])
-
-  taskId Int
-  task   Task @relation(fields: [taskId], references: [id])
+  userId      Int
+  taskId      Int
+  createdBy   User     @relation("UserSubmissions", fields: [createdById], references: [id])
+  task        Task     @relation(fields: [taskId], references: [id])
+  user        User     @relation("StudentSubmissions", fields: [userId], references: [id])
 }
 
 model ParameterSubmission {
@@ -89,7 +65,11 @@ model ParameterSubmission {
   weight      Float
   description String
   createdAt   DateTime @default(now())
+  taskId      Int
+  task        Task     @relation(fields: [taskId], references: [id])
+}
 
-  taskId Int
-  task   Task @relation(fields: [taskId], references: [id])
+enum Role {
+  PROFESSOR
+  ALUNO
 }
