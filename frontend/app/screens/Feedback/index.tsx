@@ -19,7 +19,7 @@ import BottomNav from "../../../components/BottomNav";
 import { styles } from "./style";
 
 export default function Home() {
-  const [page, setPage] = useState("feedback")
+  const [page, setPage] = useState("Feedback")
   return (
      <View style={{ flex: 1}}>
       <StatusBar style="dark" />
