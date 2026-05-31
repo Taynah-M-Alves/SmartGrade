@@ -17,12 +17,10 @@ export default function ProgressCard() {
         <Text style={globalStyles.statLabel}>
           Média da Turma
         </Text>
-
         <Text style={globalStyles.statValue}>
           7.2
         </Text>
       </View>
-
       <View style={globalStyles.progressBar}>
         <View
           style={[
@@ -31,7 +29,6 @@ export default function ProgressCard() {
           ]}
         />
       </View>
-
       <View
         style={[
           globalStyles.statRow,
@@ -41,19 +38,18 @@ export default function ProgressCard() {
         <Text style={globalStyles.statLabel}>
           Seu Percentil
         </Text>
-
         <Text style={globalStyles.statValue}>
           Top 15%
         </Text>
       </View>
-
       <View style={globalStyles.progressBar}>
         <View
           style={[
             globalStyles.progressFill,
             {
               width: "85%",
-              backgroundColor: "#9C27B0",
+              backgroundColor: "#9C27B0", 
+
             },
           ]}
         />

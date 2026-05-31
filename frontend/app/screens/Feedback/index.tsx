@@ -14,19 +14,18 @@ import DetailsCard from "../../../components/DetailsCard";
 import TipsCard from "../../../components/TipsCard";
 import ProgressCard from "../../../components/ProgressCard";
 import UploadCard from "../../../components/UploadCard";
-import BottomNav from "../../../components/BottomNav";
 
 import { styles } from "./styles";
 
 export default function Home() {
-  const [page, setPage] = useState("Feedback")
+  const [page, setPage] = useState("feedback")
   return (
      <View style={{ flex: 1}}>
       <StatusBar style="dark" />
 
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 320 }}
+        contentContainerStyle={{ paddingBottom: 90 }}
       >
         <Header />
         
@@ -42,10 +41,8 @@ export default function Home() {
 
         <UploadCard />
 
-        <View style={{ height: 120 }} />
+        <View style={{ height: 1 }} />
       </ScrollView>
-
-      <BottomNav />
       
     </View>
   );

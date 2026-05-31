@@ -51,7 +51,13 @@ export const styles = StyleSheet.create({
     textAlign: "right",
     color: colors.text,
   },
-
+   headerSubtitle: {
+    fontSize: 18,
+    lineHeight: 28,
+    color: colors.gray,
+    marginHorizontal: 16,
+    marginTop: 8,
+  },
   avatar: {
     width: 45,
     height: 45,
@@ -377,6 +383,7 @@ export const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "800",
   },
+ 
 });
 
 export const globalStyles = styles;
