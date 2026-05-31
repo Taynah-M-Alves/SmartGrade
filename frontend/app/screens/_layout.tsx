@@ -1,12 +1,15 @@
 import { Stack } from "expo-router";
 import { View, Text, StyleSheet } from "react-native";
+import Header from '../../components/Header'
 
 export default function ScreensLayout() {
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>TESTANDO !!</Text>
+      {/* <Text style={styles.text}>TESTANDO !!</Text> */}
+      
 
       <View style={styles.content}>
+        <Header/>
         <Stack screenOptions={{ headerShown: false }} />
       </View>
     </View>
@@ -16,7 +19,6 @@ export default function ScreensLayout() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#111827",
   },
 
   text: {

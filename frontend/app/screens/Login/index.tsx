@@ -1,50 +1,68 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity } from 'react-native';
-import styles from './style';
+import React from 'react';
+import {
+  Container,
+  Card,
+  Title,
+  Subtitle,
+  Label,
+  Input,
+  InputContainer,
+  Button,
+  ButtonText,
+  DividerRow,
+  Divider,
+  DividerText,
+  SocialButton,
+  SocialText,
+  FooterText,
+  FooterLink,
+  // IconWrapper,
+} from './style';
 
-function TelaLogin({ navigation }) {
-  const [email, setEmail] = useState('');
-  const [senha, setSenha] = useState('');
+import { Text } from 'react-native';
 
+export default function Login() {
   return (
-    <View style={styles.container}>
-      <View style={styles.card}>
-        <Text style={styles.titulo}>Fazer login</Text>
+    <Container>
+      <Card>
+        <Title>SmartGrade</Title>
+        <Subtitle>Bem-vindo</Subtitle>
+        <Text style={{ textAlign: 'center', color: '#636E72', marginBottom: 20 }}>
+          Acesse sua conta de professor.
+        </Text>
 
-        <Text style={styles.label}>E-mail</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Digite seu e-mail"
-          placeholderTextColor="#999"
-          value={email}
-          onChangeText={setEmail}
-          autoCapitalize="none"
-        />
+        <Label>E-mail</Label>
+        <InputContainer>
+          <Input placeholder="nome@instituicao.edu" />
+        </InputContainer>
 
-        <Text style={styles.label}>Senha</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Digite sua senha"
-          placeholderTextColor="#999"
-          secureTextEntry
-          value={senha}
-          onChangeText={setSenha}
-        />
+        <Label>Senha</Label>
+        <InputContainer>
+          <Input placeholder="••••••••" secureTextEntry />
+        </InputContainer>
 
-        <TouchableOpacity onPress={() => navigation && navigation.navigate('EsqueceuSenha')}>
-          <Text style={styles.link}>Esqueceu sua senha?</Text>
-        </TouchableOpacity>
+        <Button>
+          <ButtonText>Entrar</ButtonText>
+        </Button>
 
-        <TouchableOpacity style={styles.botaoLogin}>
-          <Text style={styles.textoBotaoLogin}>Entrar</Text>
-        </TouchableOpacity>
-      </View>
+        <DividerRow>
+          <Divider />
+          <DividerText>OU CONTINUE COM</DividerText>
+          <Divider />
+        </DividerRow>
 
-      <TouchableOpacity style={styles.botaoCadastro}>
-        <Text style={styles.textoBotaoCadastro}>Criar sua conta</Text>
-      </TouchableOpacity>
-    </View>
+        <SocialButton>
+          <SocialText>Google</SocialText>
+        </SocialButton>
+
+        <SocialButton>
+          <SocialText>Apple</SocialText>
+        </SocialButton>
+
+        <FooterText>
+          Não tem uma conta? <FooterLink>Criar conta</FooterLink>
+        </FooterText>
+      </Card>
+    </Container>
   );
 }
-
-export default TelaLogin;

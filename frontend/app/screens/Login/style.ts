@@ -1,89 +1,107 @@
-import { StyleSheet } from 'react-native';
+import styled from 'styled-components/native';
 
-const styles = StyleSheet.create({
-  container: { 
-    flex: 1,
-    backgroundColor: '#FFFFFF', // Branco puro garantido
-    padding: 20,
-    justifyContent: 'center',
-  },
+export const Container = styled.View`
+  flex: 1;
+  background-color: #f4f7ff;
+  justify-content: center;
+  padding: 20px;
+`;
 
-  titulo: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    marginBottom: 30,
-    color: '#1F4EA3',
-    textAlign: 'center',
-  },
+export const Card = styled.View`
+  background-color: #fff;
+  border-radius: 25px;
+  padding: 25px;
+  elevation: 5;
+`;
 
-  card: {
-    width: '100%',
-    backgroundColor: '#FFFFFF',
-    borderRadius: 12,
-    padding: 25,
-    borderWidth: 1,
-    borderColor: '#8c3f9b',
-    // Configuração de sombra para destaque
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: 4 },
-    elevation: 5,
-  },
+export const Title = styled.Text`
+  font-size: 26px;
+  font-weight: bold;
+  color: #2d5bff;
+  text-align: center;
+`;
 
-  label: {
-    fontSize: 14,
-    marginBottom: 6,
-    color: '#8c3f9b',
-    fontWeight: '500',
-  },
+export const Subtitle = styled.Text`
+  font-size: 28px;
+  font-weight: bold;
+  color: #2d3436;
+  text-align: center;
+  margin-top: 10px;
+`;
 
-  input: {
-    borderWidth: 1,
-    borderColor: '#305cb1',
-    borderRadius: 8,
-    padding: 12,
-    marginBottom: 20,
-    backgroundColor: '#FFFFFF',
-    color: '#000',
-  },
+export const Label = styled.Text`
+  font-size: 13px;
+  color: #636e72;
+  margin-top: 15px;
+  margin-bottom: 5px;
+`;
 
-  link: {
-    color: '#8c3f9b',
-    marginBottom: 20,
-    fontSize: 14,
-    textAlign: 'right',
-  },
+export const InputContainer = styled.View`
+  flex-direction: row;
+  align-items: center;
+  background-color: #f1f3f6;
+  border-radius: 12px;
+  padding: 10px 15px;
+`;
 
-  botaoLogin: {
-    backgroundColor: '#1F4EA3',
-    padding: 15,
-    borderRadius: 8,
-    alignItems: 'center',
-  },
+export const Input = styled.TextInput`
+  flex: 1;
+  font-size: 14px;
+  color: #2d3436;
+`;
 
-  textoBotaoLogin: {
-    fontWeight: 'bold',
-    fontSize: 16,
-    color: '#FFFFFF',
-  },
+export const Button = styled.TouchableOpacity`
+  background-color: #3b5bff;
+  padding: 15px;
+  border-radius: 15px;
+  margin-top: 20px;
+  align-items: center;
+`;
 
-  botaoCadastro: {
-    marginTop: 30,
-    borderWidth: 1,
-    borderColor: '#A33AA3',
-    padding: 15,
-    borderRadius: 8,
-    width: '100%',
-    alignItems: 'center',
-    backgroundColor: '#FFFFFF',
-  },
+export const ButtonText = styled.Text`
+  color: #fff;
+  font-weight: bold;
+  font-size: 16px;
+`;
 
-  textoBotaoCadastro: {
-    fontWeight: '500',
-    fontSize: 15,
-    color: '#8c3f9b',
-  }
-});
+export const DividerRow = styled.View`
+  flex-direction: row;
+  align-items: center;
+  margin: 20px 0;
+`;
 
-export default styles;
+export const Divider = styled.View`
+  flex: 1;
+  height: 1px;
+  background-color: #dfe6e9;
+`;
+
+export const DividerText = styled.Text`
+  margin: 0 10px;
+  font-size: 10px;
+  color: #636e72;
+`;
+
+export const SocialButton = styled.TouchableOpacity`
+  border: 1px solid #dfe6e9;
+  padding: 12px;
+  border-radius: 12px;
+  align-items: center;
+  margin-bottom: 10px;
+`;
+
+export const SocialText = styled.Text`
+  font-weight: bold;
+  color: #2d3436;
+`;
+
+export const FooterText = styled.Text`
+  text-align: center;
+  margin-top: 15px;
+  color: #636e72;
+`;
+
+export const FooterLink = styled.Text`
+  color: #6c5ce7;
+  font-weight: bold;
+`;
