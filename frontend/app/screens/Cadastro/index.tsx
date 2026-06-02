@@ -22,13 +22,13 @@ import {router} from 'expo-router'
 import { Text, Alert, TouchableOpacity, ScrollView } from 'react-native';
 
 export default function Cadastro() {
-  const [nome, setNome] = useState('')
+  const [name, setName] = useState('')
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState('ALUNO');
   const [loading, setLoading] = useState(false);
 
-  const [selected, setSelected] = useState<DropdownData<string, string> | null>(null);  
+  const [selected, setSelected] = useState(null);  
     
   async function handleCadastro() {
     try{
@@ -41,10 +41,10 @@ export default function Cadastro() {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            nome,
+            name,
             email,
             password,
-            role
+            role,
           }),
         },
       );
@@ -59,7 +59,7 @@ export default function Cadastro() {
 
       console.log('data', data);
 
-      const role = data.user.role;
+      const userRole = data.user.role;
 
       if (role === 'PROFESSOR'){
         router.push('/screens/CriarRubrica');
@@ -90,8 +90,8 @@ export default function Cadastro() {
         <InputContainer>
           <Input
           placeholder="Digite seu nome"
-          value={nome}
-          onChangeText={setNome}/>
+          value={name}
+          onChangeText={setName}/>
         </InputContainer>
 
         <Label>E-mail</Label>
