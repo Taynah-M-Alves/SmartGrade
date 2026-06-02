@@ -1,9 +1,9 @@
-import { IsNotEmpty } from 'class-validator';
+// import { IsNotEmpty } from 'class-validator';
 
-export class CreateTaskSubmissionDto {
-  @IsNotEmpty()
-  taskId!: string;
+// export class CreateTaskSubmissionDto {
+//   @IsNotEmpty()
+//   taskId!: string;
 
-  @IsNotEmpty()
-  userId!: string;
-}
+//   @IsNotEmpty()
+//   userId!: string;
+// }

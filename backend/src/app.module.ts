@@ -1,41 +1,29 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
-// import { DisciplineService } from './disciplina/discipline.service';
-// import { DisciplineModule } from './disciplina/discipline.module';
-// import { DisciplineController } from './disciplina/discipline.controller';
-import { UploadModule } from './modules/upload/upload.module';
-import { AuthModule } from './modules/auth/auth.module';
-// import { PrismaService } from './prisma/prisma.service';
-import { TasksModule } from './modules/tasks/tasks.module';
 import { PrismaModule } from './prisma/prisma.module';
-import { TaskSubmissionModule } from './modules/task-submission/task-submission.module';
+
+import { UsersModule } from './modules/users/users.module'; 
+
+import { AuthModule } from './modules/auth/auth.module';
+
+import { TasksModule } from './modules/tasks/tasks.module';
+
+import { TaskCriteriaModule } from './modules/task-criteria/task-criteria.module';
+
+import { SubmissionsModule } from './modules/submissions/submissions.module';
+
+import { AiModule } from './modules/ai/ai.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      envFilePath: ['.env.development.local', '.env.development', '.env'],
-      isGlobal: true,
-    }),
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      database: process.env.DB_DATABASE,
-      host: process.env.DB_HOST,
-      port: Number(process.env.DB_PORT),
-      username: process.env.DB_USERNAME,
-      password: process.env.DB_PASSWORD,
-      entities: [`${__dirname}/**/*.entity.{ts,js}`],
-      migrations: [`${__dirname}/migration/*.{ts,js}`],
-      migrationsRun: true,
-    }),
-    // DisciplineModule,
-    UploadModule,
+    ConfigModule.forRoot({ isGlobal: true }),
+    PrismaModule,
+    UsersModule,
     AuthModule,
     TasksModule,
-    PrismaModule,
-    TaskSubmissionModule,
+    TaskCriteriaModule,
+    SubmissionsModule,
+    AiModule,
   ],
-  // controllers: [DisciplineController],
-  providers: [],
 })
 export class AppModule {}

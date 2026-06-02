@@ -19,7 +19,6 @@
   },
   "homepage": "https://github.com/Taynah-M-Alves/SmartGrade#readme",
   "dependencies": {
-<<<<<<< HEAD
     "@expo/vector-icons": "^15.0.2",
     "@react-native-community/slider": "5.1.2",
     "expo": "^55.0.20",
@@ -30,10 +29,5 @@
     "@types/styled-components-react-native": "^5.2.5"
   }
 }
-=======
-    "prisma": "^7.8.0"
-  }
-}
   
 
->>>>>>> 9e6028bf3fc03ed64d4819a32ffd0ed2d89513de
