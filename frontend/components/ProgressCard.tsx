@@ -1,50 +1,59 @@
-import { View, Text, StyleSheet } from 'react-native';
-import { colors } from '../styles/colors';
+import React from "react";
+import {
+  View,
+  Text,
+} from "react-native";
+
+import { globalStyles } from "app/screens/Feedback/styles";
 
 export default function ProgressCard() {
   return (
-    <View style={styles.card}>
-      <Text style={styles.title}>IA analisando seu envio...</Text>
-      <Text style={styles.percent}>68%</Text>
+    <View style={globalStyles.card}>
+      <Text style={globalStyles.statsTitle}>
+        ESTATÍSTICAS RÁPIDAS
+      </Text>
 
-      <View style={styles.barBackground}>
-        <View style={styles.barFill} />
+      <View style={globalStyles.statRow}>
+        <Text style={globalStyles.statLabel}>
+          Média da Turma
+        </Text>
+        <Text style={globalStyles.statValue}>
+          7.2
+        </Text>
+      </View>
+      <View style={globalStyles.progressBar}>
+        <View
+          style={[
+            globalStyles.progressFill,
+            { width: "72%" },
+          ]}
+        />
+      </View>
+      <View
+        style={[
+          globalStyles.statRow,
+          { marginTop: 24 },
+        ]}
+      >
+        <Text style={globalStyles.statLabel}>
+          Seu Percentil
+        </Text>
+        <Text style={globalStyles.statValue}>
+          Top 15%
+        </Text>
+      </View>
+      <View style={globalStyles.progressBar}>
+        <View
+          style={[
+            globalStyles.progressFill,
+            {
+              width: "85%",
+              backgroundColor: "#9C27B0", 
+
+            },
+          ]}
+        />
       </View>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  card: {
-    backgroundColor: colors.surface,
-    padding: 20,
-    borderRadius: 20,
-    marginBottom: 18,
-    shadowColor: '#0F172A',
-    shadowOpacity: 0.05,
-    shadowOffset: { width: 0, height: 8 },
-    shadowRadius: 18,
-    elevation: 2,
-  },
-  title: {
-    fontWeight: '600',
-    marginBottom: 8,
-    color: colors.textPrimary,
-  },
-  percent: {
-    color: colors.primary,
-    fontWeight: '700',
-    marginBottom: 10,
-  },
-  barBackground: {
-    height: 8,
-    backgroundColor: colors.border,
-    borderRadius: 10,
-  },
-  barFill: {
-    width: '68%',
-    height: 8,
-    backgroundColor: colors.primary,
-    borderRadius: 10,
-  },
-});

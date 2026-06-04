@@ -1,38 +1,58 @@
-import { View, Text, StyleSheet } from 'react-native';
-import { colors } from '../styles/colors';
+import React from "react";
+import {
+  View,
+  Text,
+} from "react-native";
 
-export default function DetailsCard() {
+import Feather from "@expo/vector-icons/Feather";
+
+import { globalStyles } from "app/screens/Feedback/styles";
+
+export default function 
+DetailsCard() {
   return (
-    <View style={styles.card}>
-      <Text style={styles.title}>Detalhes do Envio</Text>
+    <View style={globalStyles.card}>
+      <View style={globalStyles.cardHeader}>
+        <View
+          style={[
+            globalStyles.iconBox,
+            { backgroundColor: "#FDECEC" },
+          ]}
+        >
+          <Feather
+            name="trending-up"
+            size={24}
+            color="#C0392B"
+          />
+        </View>
 
-      <Text style={styles.text}>Data de entrega: 24 Out, 23:59</Text>
-      <Text style={styles.text}>Palavras requeridas: 2.500 - 3.000</Text>
-      <Text style={styles.text}>Tentativas restantes: 2 de 3</Text>
+        <Text style={globalStyles.cardTitle}>
+          Pontos a Melhorar
+        </Text>
+      </View>
+
+      <View style={globalStyles.quoteBox}>
+        <View style={globalStyles.quoteBar} />
+
+        <Text style={globalStyles.quoteText}>
+          "Melhorar a fluidez entre os
+          parágrafos 2 e 3."
+        </Text>
+      </View>
+
+      <Text
+        style={{
+          marginTop: 20,
+          fontSize: 16,
+          lineHeight: 28,
+          color: "#666",
+        }}
+      >
+        A transição atual parece abrupta,
+        passando do contexto histórico
+        para a aplicação moderna sem
+        uma ponte temática clara.
+      </Text>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  card: {
-    backgroundColor: colors.surface,
-    padding: 20,
-    borderRadius: 20,
-    marginBottom: 20,
-    shadowColor: '#0F172A',
-    shadowOpacity: 0.05,
-    shadowOffset: { width: 0, height: 8 },
-    shadowRadius: 18,
-    elevation: 2,
-  },
-  title: {
-    fontSize: 16,
-    fontWeight: '700',
-    marginBottom: 12,
-    color: colors.textPrimary,
-  },
-  text: {
-    color: colors.textSecondary,
-    lineHeight: 22,
-  },
-});

@@ -1,30 +1,21 @@
-import { View, Text, StyleSheet } from 'react-native';
-import { colors } from '../styles/colors';
+import React from "react";
+import {
+  View,
+  Text,
+} from "react-native";
+
+import { globalStyles } from "app/screens/Feedback/styles";
 
 export default function Header() {
   return (
-    <View style={styles.header}>
-      <Text style={styles.logo}>SmartGrade</Text>
-      <View style={styles.avatar} />
+    <View style={globalStyles.header}>
+      <Text style={globalStyles.headerTitle}>
+        Feedback
+      </Text>
+      <Text style={globalStyles.headerSubtitle}>
+        Veja onde você se destacou e onde pode melhorar
+      </Text>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 28,
-  },
-  logo: {
-    color: colors.primary,
-    fontWeight: '700',
-    fontSize: 16,
-  },
-  avatar: {
-    width: 34,
-    height: 34,
-    borderRadius: 17,
-    backgroundColor: colors.primary,
-  },
-});
