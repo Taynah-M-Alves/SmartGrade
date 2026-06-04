@@ -6,7 +6,7 @@ import {
 
 import * as bcrypt from 'bcrypt';
 
-import { Prisma } from '../../../generated/prisma/client';
+import { Prisma } from '@prisma/client';
 
 import { PrismaService } from '../../prisma/prisma.service';
 

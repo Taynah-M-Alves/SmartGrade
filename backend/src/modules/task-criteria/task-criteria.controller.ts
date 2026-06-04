@@ -11,7 +11,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
-import { Role } from '../../../generated/prisma/client';
+import { Role } from '@prisma/client';
 
 import { Roles } from '../auth/decorators/roles.decorator';
 

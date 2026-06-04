@@ -21,7 +21,7 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 
 import { Roles } from '../auth/decorators/roles.decorator';
 
-import { Role } from '../../../generated/prisma/client';
+import { Role } from '@prisma/client';
 
 @Controller('users')
 export class UsersController {
