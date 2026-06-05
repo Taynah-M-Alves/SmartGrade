@@ -16,7 +16,7 @@ import {
   SocialText,
   FooterText,
   // IconWrapper,
-} from './style';
+} from '../../../styles/login.styles';
 import {router} from 'expo-router'
 // import {SelectDropdown, DropdownData} from "expo-select-dropdown";
 import { Text, Alert, TouchableOpacity, ScrollView  } from 'react-native';
@@ -32,7 +32,7 @@ export default function Login() {
     try{
       setLoading(true);
 
-      const response = await fetch('http://192.168.1.13:3000/auth/login',
+      const response = await fetch('https://smart-grade-api-t09j.onrender.com/auth/login',
         {
           method: 'POST',
           headers:{
@@ -117,7 +117,7 @@ export default function Login() {
         </SocialButton>
 
         <FooterText>
-          Não tem uma conta? <TouchableOpacity onPress={() => router.push('/screens/Cadastro')}>Criar conta</TouchableOpacity>
+          Não tem uma conta? <TouchableOpacity onPress={() => router.push('/screens/Cadastro')}><Text>Criar conta</Text></TouchableOpacity>
         </FooterText>
 
         <TouchableOpacity onPress={() => router.push('/screens/Cadastro')}><Text>Criar Conta</Text></TouchableOpacity>

@@ -16,7 +16,7 @@ import {
   SocialText,
   FooterText,
   // IconWrapper,
-} from './style';
+} from '../../../styles/cadastro.styles';
 import {router} from 'expo-router'
 // import {SelectDropdown, DropdownData} from "expo-select-dropdown";
 import { Text, Alert, TouchableOpacity, ScrollView } from 'react-native';

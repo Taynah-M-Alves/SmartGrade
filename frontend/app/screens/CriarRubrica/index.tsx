@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, ScrollView, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Slider from '@react-native-community/slider';
-import * as S from './styles'; 
-
+import * as S from '../../../styles/criarRubrica.styles';
 interface Criterio {
   id: string;
   peso: number;
