@@ -2,13 +2,26 @@ import { router } from "expo-router";
 import {createContext, PropsWithChildren, useState, useEffect} from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+type User = {
+    id: number;
+    nome: string;
+    email: string;
+    role: string;
+}
+
 type AuthState = {
     isLoggedIn: boolean;
     isReady: boolean;
     roleUser: string | null;
     token: string | null;
     userId: number | null;
-    signIn: (role: string, token: string, userId:number) => void;
+    user: User | null;
+
+    signIn: (
+      user: User,
+      token: string
+    ) => void;
+
     signOut: () => void;
 }
 
@@ -22,8 +35,9 @@ export default function AuthProvider({children} : PropsWithChildren){
     const [roleUser, setRoleUser] = useState("")
     const [token, setToken] = useState<string | null>(null);
     const [userId, setUserId] = useState<number | null>(null);
+    const [user, setUser] = useState<User | null>(null);
 
-    async function storageState(newState: {isLoggedIn: boolean, roleUser: string | null, token: string | null,  userId: number | null;}) {
+    async function storageState(newState: {isLoggedIn: boolean, roleUser: string | null, token: string | null,  userId: number | null; user: User | null}) {
         try{
             await AsyncStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(newState))
 
@@ -32,18 +46,21 @@ export default function AuthProvider({children} : PropsWithChildren){
         }
     }
 
-    function signIn(role: string, token: string, userId:number) {
-        setRoleUser(role)
-        setToken(token)
-        setUserId(userId);
-        setIsLoggedIn(true)
+    function signIn(user: User, token: string, ) {
+        setRoleUser(user.role);
+        setToken(token);
+        setUserId(user.id);
+        setUser(user);
+        setIsLoggedIn(true);
         storageState({
             isLoggedIn: true, 
-            roleUser: role, 
+            roleUser: user.role, 
             token,
-            userId})
+            userId: user.id,
+            user
+        })
         
-        if (role === "PROFESSOR") {
+        if (user.role === "PROFESSOR") {
             router.replace("/(protected)/professor/(tabs)");
         } else {
             router.replace("/(protected)/aluno/(tabs)");
@@ -55,12 +72,14 @@ export default function AuthProvider({children} : PropsWithChildren){
         setRoleUser("");
         setToken(null);
         setUserId(null);
+        setUser(null)
 
         storageState({
-            isLoggedIn: false, 
-            roleUser: null, 
+            isLoggedIn: false,
+            roleUser: null,
             token: null,
-            userId: null})
+            userId: null,
+            user: null})
         router.replace("/screens/TelaInicial")
     }
 
@@ -78,6 +97,7 @@ export default function AuthProvider({children} : PropsWithChildren){
 
                 setToken(state?.token ?? null);
                 setUserId(state?.userId ?? null);
+                setUser(state?.user ?? null);
                 setIsLoggedIn(state?.isLoggedIn ?? false);
                 console.log("STORAGE --> ",state)
 
@@ -94,10 +114,12 @@ export default function AuthProvider({children} : PropsWithChildren){
     },[])
 
     return(
-        <AuthContext.Provider value={{ isLoggedIn,
+        <AuthContext.Provider value={{ 
+        isLoggedIn,
         roleUser,
         token,
         userId,
+        user,
         signIn,
         signOut,
         isReady}}>

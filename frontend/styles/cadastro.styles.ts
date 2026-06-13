@@ -2,14 +2,14 @@ import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#F9FAFB',
-    paddingHorizontal: 20,
-    paddingTop: 40,
+    width: 'auto',
+    justifyContent: 'center',
+  padding: 20,
   },
 
   card: {
     backgroundColor: '#FFFFFF',
+    width: 'auto',
     borderRadius: 20,
     padding: 24,
     shadowColor: '#000',
@@ -79,7 +79,7 @@ export const styles = StyleSheet.create({
   },
 
   roleButtonSelected: {
-    backgroundColor: '#2F5BB7',
+    backgroundColor: '#3C096C',
     borderColor: '#2F5BB7',
   },
 
@@ -93,7 +93,7 @@ export const styles = StyleSheet.create({
   },
 
   button: {
-    backgroundColor: '#2F5BB7',
+    backgroundColor: '#3C096C',
     paddingVertical: 15,
     borderRadius: 10,
     alignItems: 'center',

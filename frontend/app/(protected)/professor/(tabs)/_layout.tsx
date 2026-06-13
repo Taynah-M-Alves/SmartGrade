@@ -14,13 +14,13 @@ export default function ProfessorTabsLayout() {
         }}
       />
 
-      <Tabs.Screen
+      {/* <Tabs.Screen
         name="CriarRubrica"
         options={{
           headerShown: false,
           title: "Rubrica",
         }}
-      />
+      /> */}
 
       <Tabs.Screen
         name="listarAtividades"

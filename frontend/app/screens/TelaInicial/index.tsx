@@ -16,9 +16,12 @@ import { styles } from '../../../styles/telaInicial.styles';
 
 import { router } from 'expo-router';
 
+import PageContainer from "../../../components/PageContainer";
+
 export default function AuthScreen() {
   return (
-    <SafeAreaView style={styles.container}>
+    <PageContainer>
+      <SafeAreaView style={styles.container}>
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.content}
@@ -107,5 +110,7 @@ export default function AuthScreen() {
         </View>
       </ScrollView>
     </SafeAreaView>
+    </PageContainer>
+    
   );
 }

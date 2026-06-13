@@ -15,7 +15,15 @@ import {
   AntDesign,
 } from "@expo/vector-icons";
 
+import PageContainer from "components/PageContainer";
+import { useAuth } from "hooks/useAuth";
+
 export default function ProfessorHome() {
+
+  const { user } = useAuth()
+
+  console.log('user', user)
+  console.log('')
   return (
     <View style={styles.container}>
       <ScrollView
@@ -28,7 +36,7 @@ export default function ProfessorHome() {
           <Text style={styles.welcomeText}>BEM-VINDO DE VOLTA</Text>
 
           <Text style={styles.title}>
-            Bom dia, Professor{"\n"}Roberto
+            Bom dia, Professor{"\n"}{user?.nome}
           </Text>
         </View>
 

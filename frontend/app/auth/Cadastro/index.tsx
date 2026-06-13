@@ -7,9 +7,11 @@ import {
   TouchableOpacity,
   ScrollView,
   TextInput,
+  Image
 } from 'react-native';
 
 import { styles } from '../../../styles/cadastro.styles';
+import PageContainer from 'components/PageContainer';
 
 enum Role  {
   ALUNO='ALUNO',
@@ -110,18 +112,25 @@ async function handleCadastro() {
 }
 
   return (
-    <ScrollView>
-      <View style={styles.container}>
+    <PageContainer>
+      <View >
         <View style={styles.card}>
-          <Text style={styles.title}>SmartGrade</Text>
 
-          <Text style={styles.subtitle}>
-            Bem-vindo
-          </Text>
+          <Image
+                    source={require("../../../assets/logoSemBackground.png")}
+                    style={{
+                      width: 250,
+                      height: 250,
+                      alignSelf: "center",
+                      marginBottom: 0,
+                    }}
+                    resizeMode="contain"
+                  />
 
           <Text style={styles.description}>
-            Cadastre-se
+            Complete as informações para se tornar um usuário.
           </Text>
+
 
           <Text style={styles.label}>Nome</Text>
           <TextInput
@@ -228,6 +237,6 @@ async function handleCadastro() {
           </TouchableOpacity> */}
         </View>
       </View>
-    </ScrollView>
+    </PageContainer>
   );
 }

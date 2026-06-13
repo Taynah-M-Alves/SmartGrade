@@ -1,8 +1,7 @@
 import styled from 'styled-components/native';
 
 export const Container = styled.View`
-  flex: 1;
-  background-color: #f4f7ff;
+  width: 100%;
   justify-content: center;
   padding: 20px;
 `;
@@ -11,23 +10,25 @@ export const Card = styled.View`
   background-color: #fff;
   border-radius: 25px;
   padding: 25px;
+
+  width: 100%;
+
   elevation: 5;
 `;
 
-export const Title = styled.Text`
-  font-size: 26px;
-  font-weight: bold;
-  color: #2d5bff;
-  text-align: center;
-`;
+// export const Title = styled.Text`
+//   font-size: 26px;
+//   font-weight: bold;
+//   text-align: center;
+// `;
 
-export const Subtitle = styled.Text`
-  font-size: 28px;
-  font-weight: bold;
-  color: #2d3436;
-  text-align: center;
-  margin-top: 10px;
-`;
+// export const Subtitle = styled.Text`
+//   font-size: 28px;
+//   font-weight: bold;
+//   color: #2d3436;
+//   text-align: center;
+//   margin-top: 10px;
+// `;
 
 export const Label = styled.Text`
   font-size: 13px;
@@ -51,7 +52,7 @@ export const Input = styled.TextInput`
 `;
 
 export const Button = styled.TouchableOpacity`
-  background-color: #3b5bff;
+  background-color: #3C096C;
   padding: 15px;
   border-radius: 15px;
   margin-top: 20px;

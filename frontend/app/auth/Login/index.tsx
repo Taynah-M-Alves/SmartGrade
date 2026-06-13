@@ -2,8 +2,6 @@ import React, {useState} from 'react';
 import {
   Container,
   Card,
-  Title,
-  Subtitle,
   Label,
   Input,
   InputContainer,
@@ -17,8 +15,9 @@ import {
   FooterText,
 } from '../../../styles/login.styles';
 import {router} from 'expo-router'
-import { Text, Alert, TouchableOpacity, ScrollView  } from 'react-native';
+import { Text, Alert, TouchableOpacity, Image  } from 'react-native';
 import { useAuth } from 'hooks/useAuth';
+import PageContainer from 'components/PageContainer';
 
 
 
@@ -56,16 +55,12 @@ export default function Login() {
         );
       }
 
-      // console.log('data', data);
-
-      const role = data.user.role;
-
       const token = data.access_token;
 
-      const userId = Number(data.user.id);
+      alert('Login realizado com sucesso!')
 
       
-      signIn(role, token, userId)
+      signIn(data.user, token)
     } catch (error: any) {
       Alert.alert('Erro', error.message || 'Falha ao realizar login',
       );
@@ -76,14 +71,20 @@ export default function Login() {
     }
   }
   return (
-    <ScrollView>
+    <PageContainer>
+
     <Container>
       <Card>
-        <Title>SmartGrade</Title>
-        <Subtitle>Bem-vindo</Subtitle>
-        <Text style={{ textAlign: 'center', color: '#636E72', marginBottom: 20 }}>
-           Login.
-        </Text>
+         <Image
+          source={require("../../../assets/logoSemBackground.png")}
+          style={{
+            width: 250,
+            height: 250,
+            alignSelf: "center",
+            marginBottom: 0,
+          }}
+          resizeMode="contain"
+        />
 
         <Label>E-mail</Label>
         <InputContainer>
@@ -96,7 +97,7 @@ export default function Login() {
         <Label>Senha</Label>
         <InputContainer>
           <Input placeholder="••••••••" 
-          // secureTextEntry
+          secureTextEntry
           value={password}
           onChangeText={setPassword} />
         </InputContainer>
@@ -105,27 +106,14 @@ export default function Login() {
           <ButtonText>{loading ? "Entrando..." : "Entrar"}</ButtonText>
         </Button>
 
-        {/* <DividerRow>
-          <Divider />
-          <DividerText>OU CONTINUE COM</DividerText>
-          <Divider />
-        </DividerRow>
-
-        <SocialButton>
-          <SocialText>Google</SocialText>
-        </SocialButton>
-
-        <SocialButton>
-          <SocialText>Apple</SocialText>
-        </SocialButton> */}
-
         <FooterText>
-          Não tem uma conta? <TouchableOpacity onPress={() => router.push('/screens/Cadastro')}><Text>Criar conta</Text></TouchableOpacity>
+          Não tem uma conta? <TouchableOpacity onPress={() => router.push('/auth/Cadastro')}><Text>Criar conta</Text></TouchableOpacity>
         </FooterText>
 
         {/* <TouchableOpacity onPress={() => router.push('/screens/Cadastro')}><Text>Criar Conta</Text></TouchableOpacity> */}
       </Card>
     </Container>
-    </ScrollView>
+    
+    </PageContainer>
   );
 }
