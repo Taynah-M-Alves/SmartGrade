@@ -64,16 +64,6 @@ export default function Login() {
 
       const userId = Number(data.user.id);
 
-      // console.log('tokenLogin', token)
-
-      // if (role === 'PROFESSOR'){
-      //   router.push('/screens/CriarRubrica');
-      // } else if(role === 'ALUNO') {
-      //   router.push('/screens/TelaInicial');
-      // } else {
-      //   Alert.alert('Erro','Perfil não reconhecido');
-      // }
-
       
       signIn(role, token, userId)
     } catch (error: any) {
