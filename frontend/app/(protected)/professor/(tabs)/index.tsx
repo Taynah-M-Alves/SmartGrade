@@ -15,6 +15,7 @@ import {
   Entypo,
   AntDesign,
 } from "@expo/vector-icons";
+import { router } from "expo-router";
 
 import { useState, useEffect } from "react";
 
@@ -54,7 +55,7 @@ export default function ProfessorHome() {
   
       setAtividades(minhasAtividades);
   
-        console.log(data);
+        console.log("data",data);
   
         console.log("atividades", atividades)
       } catch (error: any) {
@@ -65,6 +66,8 @@ export default function ProfessorHome() {
     useEffect(() => {
     if (token && user?.id) {
       findAtividades();
+
+      console.log("atividadesEffect", atividades)
     }
   }, [token, user]);
   return (
@@ -171,11 +174,25 @@ export default function ProfessorHome() {
         </View>
       </View>
 
-      <Entypo
-        name="dots-three-vertical"
-        size={18}
-        color="#444"
-      />
+
+      <TouchableOpacity
+    style={styles.deleteButton}
+    onPress={() =>
+    router.push({
+      pathname: "/(protected)/professor/Apagaratividade",
+      params: {
+        id: item.id,
+        countSubmission: item.submissions.length
+      },
+    })
+  }
+>
+  <Feather
+    name="trash"
+    size={22}
+    color="#fff"
+  />
+</TouchableOpacity>
     </View>
   ))
 ) : (
@@ -241,6 +258,16 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: "#7F8CFF",
   },
+
+  deleteButton: {
+  width: 45,
+  height: 45,
+  borderRadius: 12,
+  backgroundColor: "#EF4444",
+  justifyContent: "center",
+  alignItems: "center",
+  marginLeft: 10,
+},
 
   welcomeContainer: {
     paddingHorizontal: 25,

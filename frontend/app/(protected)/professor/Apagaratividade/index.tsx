@@ -1,12 +1,18 @@
 import React from "react";
 import { View , Text, TouchableOpacity} from "react-native";
-
-import { styles } from '../../../../../styles/apagarAtividade.styles';
+import { useLocalSearchParams } from "expo-router";
+import { styles } from '../../../../styles/apagarAtividade.styles';
 type Props = {
     onPress: () => void;
 }
 
 export default function ApagarAtividade({ onPress }: Props) {
+
+    const {
+  id,
+  countSubmission
+} = useLocalSearchParams();
+
     return (
         <View style={styles.container}>
             <Text style={styles.subtitle}>
@@ -34,7 +40,7 @@ export default function ApagarAtividade({ onPress }: Props) {
 </View>
             
             <View style={styles.infoBox}>
-  <Text style={styles.infoNumber}>2</Text>
+  <Text style={styles.infoNumber}>{countSubmission}</Text>
 
   <Text style={styles.infoText}>
     Alunos Afetados

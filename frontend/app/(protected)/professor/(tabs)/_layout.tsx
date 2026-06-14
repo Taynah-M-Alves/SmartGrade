@@ -13,7 +13,7 @@ export default function ProfessorTabsLayout() {
         options={{
           headerShown: false,
           title: "Home",
-          tabBarIcon: ({ color }) => <FontAwesome size={28} name="home" color={color} />
+          tabBarIcon: ({ color }) => <FontAwesome size={34} name="home" color={color} />
         }}
       />
 
