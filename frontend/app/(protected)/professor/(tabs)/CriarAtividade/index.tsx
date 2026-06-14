@@ -7,54 +7,56 @@ import {
   TextInput,
   Alert,
   ActivityIndicator,
+  Platform,
 } from "react-native";
 
 import { Ionicons, AntDesign, Feather } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useState } from "react";
+import DateTimePicker from "@react-native-community/datetimepicker";
 import { useAuth } from "hooks/useAuth";
 
-// ─── Tipos ────────────────────────────────────────────────────────────────────
-
 type Criterio = {
-  id: string; // local, para key do map
+  id: string;
   title: string;
   weight: string;
   description: string;
 };
 
-// ─── Componente ───────────────────────────────────────────────────────────────
-
 export default function CriarAtividade() {
   const api = process.env.EXPO_PUBLIC_BASE_URL;
   const { token } = useAuth();
 
-  // Etapa: "task" | "criterios" | "done"
   const [etapa, setEtapa] = useState<"task" | "criterios" | "done">("task");
   const [loading, setLoading] = useState(false);
 
-  // Campos da task
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [deadline, setDeadline] = useState("");
 
-  // Task criada (retorno da API)
+  const [deadline, setDeadline] = useState<Date>(new Date());
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [dateSelected, setDateSelected] = useState(false);
+
   const [taskCriada, setTaskCriada] = useState<any>(null);
 
-  // Lista de critérios
   const [criterios, setCriterios] = useState<Criterio[]>([
     { id: Date.now().toString(), title: "", weight: "", description: "" },
   ]);
 
-  // ── Helpers ────────────────────────────────────────────────────────────────
+  const formatDateDisplay = (date: Date) =>
+    date.toLocaleDateString("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
 
-  const parseDeadline = (input: string): string | null => {
-    const parts = input.split("/");
-    if (parts.length !== 3) return null;
-    const [day, month, year] = parts;
-    const date = new Date(`${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}T23:59:59.000Z`);
-    if (isNaN(date.getTime())) return null;
-    return date.toISOString();
+  const onChangeDate = (_: any, selectedDate?: Date) => {
+    setShowDatePicker(Platform.OS === "ios");
+    if (selectedDate) {
+      selectedDate.setHours(23, 59, 59, 0);
+      setDeadline(selectedDate);
+      setDateSelected(true);
+    }
   };
 
   const updateCriterio = (id: string, field: keyof Criterio, value: string) => {
@@ -71,27 +73,22 @@ export default function CriarAtividade() {
   };
 
   const removeCriterio = (id: string) => {
-    if (criterios.length === 1) return; // mínimo 1
+    if (criterios.length === 1) return;
     setCriterios((prev) => prev.filter((c) => c.id !== id));
   };
 
-  // ── Passo 1: Criar Task ────────────────────────────────────────────────────
-
   const handleCriarTask = async () => {
-    if (!title.trim() || !description.trim() || !deadline.trim()) {
-      Alert.alert("Campos obrigatórios", "Preencha título, descrição e prazo.");
+    if (!title.trim() || !description.trim()) {
+      Alert.alert("Campos obrigatórios", "Preencha título e descrição.");
       return;
     }
-
-    const deadlineISO = parseDeadline(deadline);
-    if (!deadlineISO) {
-      Alert.alert("Data inválida", "Use o formato DD/MM/AAAA.");
+    if (!dateSelected) {
+      Alert.alert("Prazo obrigatório", "Selecione o prazo de entrega.");
       return;
     }
 
     try {
       setLoading(true);
-
       const response = await fetch(`${api}tasks`, {
         method: "POST",
         headers: {
@@ -101,15 +98,12 @@ export default function CriarAtividade() {
         body: JSON.stringify({
           title: title.trim(),
           description: description.trim(),
-          deadline: deadlineISO,
+          deadline: deadline.toISOString(),
         }),
       });
 
       const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || "Erro ao criar atividade.");
-      }
+      if (!response.ok) throw new Error(data.message || "Erro ao criar atividade.");
 
       setTaskCriada(data);
       setEtapa("criterios");
@@ -119,8 +113,6 @@ export default function CriarAtividade() {
       setLoading(false);
     }
   };
-
-  // ── Passo 2: Criar Critérios (um POST por critério) ────────────────────────
 
   const handleCriarCriterios = async () => {
     const validos = criterios.filter(
@@ -132,16 +124,17 @@ export default function CriarAtividade() {
       return;
     }
 
-    const pesoInvalido = validos.find((c) => isNaN(Number(c.weight)) || Number(c.weight) <= 0);
+    const pesoInvalido = validos.find(
+      (c) => isNaN(Number(c.weight)) || Number(c.weight) <= 0
+    );
     if (pesoInvalido) {
-      Alert.alert("Peso inválido", "O peso de cada critério deve ser um número maior que 0.");
+      Alert.alert("Peso inválido", "O peso deve ser um número maior que 0.");
       return;
     }
 
     try {
       setLoading(true);
 
-      // Dispara um POST para cada critério (em paralelo)
       const requests = validos.map((c) =>
         fetch(`${api}task-criteria`, {
           method: "POST",
@@ -159,11 +152,8 @@ export default function CriarAtividade() {
       );
 
       const results = await Promise.all(requests);
-
       const erro = results.find((r: any) => r.statusCode >= 400);
-      if (erro) {
-        throw new Error(erro.message || "Erro ao criar critério.");
-      }
+      if (erro) throw new Error(erro.message || "Erro ao criar critério.");
 
       setEtapa("done");
     } catch (error: any) {
@@ -173,25 +163,20 @@ export default function CriarAtividade() {
     }
   };
 
-  // ── Reset para criar nova atividade ───────────────────────────────────────
-
   const handleReset = () => {
     setTitle("");
     setDescription("");
-    setDeadline("");
+    setDeadline(new Date());
+    setDateSelected(false);
     setTaskCriada(null);
     setCriterios([{ id: Date.now().toString(), title: "", weight: "", description: "" }]);
     setEtapa("task");
   };
 
-  // ─── Render: Concluído ─────────────────────────────────────────────────────
-
   if (etapa === "done") {
     return (
       <View style={styles.doneContainer}>
-        <View style={styles.doneIcon}>
-          <Ionicons name="checkmark-circle" size={72} color="#6C5CE7" />
-        </View>
+        <Ionicons name="checkmark-circle" size={72} color="#6C5CE7" />
         <Text style={styles.doneTitle}>Atividade criada!</Text>
         <Text style={styles.doneSub}>
           A atividade <Text style={{ fontWeight: "700" }}>{taskCriada?.title}</Text> e seus
@@ -209,20 +194,16 @@ export default function CriarAtividade() {
     );
   }
 
-  // ─── Render: Formulários ──────────────────────────────────────────────────
-
   return (
     <ScrollView
       style={styles.container}
       contentContainerStyle={styles.content}
       keyboardShouldPersistTaps="handled"
     >
-      {/* Header */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Nova Atividade</Text>
       </View>
 
-      {/* Banner */}
       <LinearGradient
         colors={["#7C6CF7", "#6557E8"]}
         start={{ x: 0, y: 0 }}
@@ -244,7 +225,6 @@ export default function CriarAtividade() {
         </View>
       </LinearGradient>
 
-      {/* ── ETAPA 1: Task ── */}
       {etapa === "task" && (
         <View style={styles.formCard}>
           <Text style={styles.label}>Título *</Text>
@@ -268,16 +248,31 @@ export default function CriarAtividade() {
             textAlignVertical="top"
           />
 
-          <Text style={styles.label}>Prazo de entrega * (DD/MM/AAAA)</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="31/12/2026"
-            placeholderTextColor="#AAA"
-            value={deadline}
-            onChangeText={setDeadline}
-            keyboardType="numeric"
-            maxLength={10}
-          />
+          <Text style={styles.label}>Prazo de entrega *</Text>
+          <TouchableOpacity
+            style={[styles.input, styles.dateButton]}
+            onPress={() => setShowDatePicker(true)}
+          >
+            <Ionicons
+              name="calendar-outline"
+              size={20}
+              color={dateSelected ? "#6C5CE7" : "#AAA"}
+            />
+            <Text style={[styles.dateText, !dateSelected && styles.datePlaceholder]}>
+              {dateSelected ? formatDateDisplay(deadline) : "Selecionar data"}
+            </Text>
+          </TouchableOpacity>
+
+          {showDatePicker && (
+            <DateTimePicker
+              value={deadline}
+              mode="date"
+              display={Platform.OS === "ios" ? "spinner" : "default"}
+              minimumDate={new Date()}
+              onChange={onChangeDate}
+              locale="pt-BR"
+            />
+          )}
 
           <TouchableOpacity
             style={[styles.button, loading && styles.buttonDisabled]}
@@ -296,7 +291,6 @@ export default function CriarAtividade() {
         </View>
       )}
 
-      {/* ── ETAPA 2: Critérios ── */}
       {etapa === "criterios" && (
         <>
           {criterios.map((criterio, index) => (
@@ -343,13 +337,11 @@ export default function CriarAtividade() {
             </View>
           ))}
 
-          {/* Adicionar critério */}
           <TouchableOpacity style={styles.addButton} onPress={addCriterio}>
             <AntDesign name="plus" size={18} color="#6C5CE7" />
             <Text style={styles.addButtonText}>Adicionar critério</Text>
           </TouchableOpacity>
 
-          {/* Confirmar */}
           <TouchableOpacity
             style={[styles.button, loading && styles.buttonDisabled]}
             onPress={handleCriarCriterios}
@@ -370,26 +362,11 @@ export default function CriarAtividade() {
   );
 }
 
-// ─── Styles ───────────────────────────────────────────────────────────────────
-
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#F5F6FA",
-  },
-  content: {
-    padding: 18,
-    paddingBottom: 60,
-  },
-  header: {
-    marginTop: 50,
-    marginBottom: 18,
-  },
-  headerTitle: {
-    fontSize: 22,
-    fontWeight: "700",
-    color: "#2D3436",
-  },
+  container: { flex: 1, backgroundColor: "#F5F6FA" },
+  content: { padding: 18, paddingBottom: 60 },
+  header: { marginTop: 50, marginBottom: 18 },
+  headerTitle: { fontSize: 22, fontWeight: "700", color: "#2D3436" },
   bannerCard: {
     borderRadius: 20,
     padding: 18,
@@ -406,46 +383,18 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  bannerTitle: {
-    color: "#FFF",
-    fontSize: 16,
-    fontWeight: "700",
-  },
-  bannerSub: {
-    color: "#EAE6FF",
-    fontSize: 12,
-    marginTop: 2,
-  },
-  formCard: {
-    backgroundColor: "#FFF",
-    borderRadius: 18,
-    padding: 18,
-    marginBottom: 20,
-  },
-  criterioCard: {
-    backgroundColor: "#FFF",
-    borderRadius: 18,
-    padding: 18,
-    marginBottom: 14,
-  },
+  bannerTitle: { color: "#FFF", fontSize: 16, fontWeight: "700" },
+  bannerSub: { color: "#EAE6FF", fontSize: 12, marginTop: 2 },
+  formCard: { backgroundColor: "#FFF", borderRadius: 18, padding: 18, marginBottom: 20 },
+  criterioCard: { backgroundColor: "#FFF", borderRadius: 18, padding: 18, marginBottom: 14 },
   criterioHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     marginBottom: 4,
   },
-  criterioTitle: {
-    fontWeight: "700",
-    fontSize: 15,
-    color: "#2D3436",
-  },
-  label: {
-    fontSize: 13,
-    fontWeight: "600",
-    color: "#555",
-    marginBottom: 6,
-    marginTop: 12,
-  },
+  criterioTitle: { fontWeight: "700", fontSize: 15, color: "#2D3436" },
+  label: { fontSize: 13, fontWeight: "600", color: "#555", marginBottom: 6, marginTop: 12 },
   input: {
     backgroundColor: "#F5F6FA",
     borderRadius: 12,
@@ -456,10 +405,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#ECECEC",
   },
-  textArea: {
-    height: 90,
-    paddingTop: 12,
-  },
+  textArea: { height: 90, paddingTop: 12 },
+  dateButton: { flexDirection: "row", alignItems: "center", gap: 10 },
+  dateText: { fontSize: 14, color: "#2D3436" },
+  datePlaceholder: { color: "#AAA" },
   button: {
     backgroundColor: "#6C5CE7",
     borderRadius: 16,
@@ -470,14 +419,8 @@ const styles = StyleSheet.create({
     gap: 8,
     marginTop: 18,
   },
-  buttonDisabled: {
-    opacity: 0.6,
-  },
-  buttonText: {
-    color: "#FFF",
-    fontWeight: "700",
-    fontSize: 16,
-  },
+  buttonDisabled: { opacity: 0.6 },
+  buttonText: { color: "#FFF", fontWeight: "700", fontSize: 16 },
   addButton: {
     flexDirection: "row",
     alignItems: "center",
@@ -490,12 +433,7 @@ const styles = StyleSheet.create({
     borderStyle: "dashed",
     marginBottom: 4,
   },
-  addButtonText: {
-    color: "#6C5CE7",
-    fontWeight: "600",
-    fontSize: 15,
-  },
-  // ── Done ──
+  addButtonText: { color: "#6C5CE7", fontWeight: "600", fontSize: 15 },
   doneContainer: {
     flex: 1,
     backgroundColor: "#F5F6FA",
@@ -503,22 +441,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     padding: 32,
   },
-  doneIcon: {
-    marginBottom: 16,
-  },
-  doneTitle: {
-    fontSize: 26,
-    fontWeight: "800",
-    color: "#2D3436",
-    marginBottom: 10,
-  },
-  doneSub: {
-    fontSize: 15,
-    color: "#666",
-    textAlign: "center",
-    lineHeight: 22,
-    marginBottom: 24,
-  },
+  doneTitle: { fontSize: 26, fontWeight: "800", color: "#2D3436", marginBottom: 10, marginTop: 16 },
+  doneSub: { fontSize: 15, color: "#666", textAlign: "center", lineHeight: 22, marginBottom: 24 },
   doneCodeBox: {
     backgroundColor: "#FFF",
     borderRadius: 16,
@@ -529,15 +453,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#E8E5FF",
   },
-  doneCodeLabel: {
-    fontSize: 12,
-    color: "#888",
-    marginBottom: 6,
-  },
-  doneCode: {
-    fontSize: 22,
-    fontWeight: "800",
-    color: "#6C5CE7",
-    letterSpacing: 2,
-  },
+  doneCodeLabel: { fontSize: 12, color: "#888", marginBottom: 6 },
+  doneCode: { fontSize: 22, fontWeight: "800", color: "#6C5CE7", letterSpacing: 2 },
 });
