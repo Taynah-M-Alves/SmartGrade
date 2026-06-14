@@ -3,6 +3,7 @@ import {
   SafeAreaView,
   ScrollView,
   View,
+  Text
 } from "react-native";
 
 import { StatusBar } from "expo-status-bar";
@@ -28,6 +29,8 @@ export default function Home() {
         contentContainerStyle={{ paddingBottom: 90 }}
       >
         <Header />
+
+        <Text>1123</Text>
         
         <ScoreCard />
 
