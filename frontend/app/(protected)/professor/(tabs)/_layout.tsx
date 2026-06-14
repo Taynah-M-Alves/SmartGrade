@@ -1,7 +1,12 @@
 import { Tabs } from "expo-router";
 import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { useAuth } from "hooks/useAuth";
+import { TouchableOpacity } from "react-native";
 
 export default function ProfessorTabsLayout() {
+
+  const { signOut } = useAuth();
+
   return (
     <Tabs
       screenOptions={{
@@ -17,15 +22,25 @@ export default function ProfessorTabsLayout() {
         }}
       />
 
-      {/* <Tabs.Screen
+      <Tabs.Screen
+        name="CriarRubrica/index"
+        options={{
+          headerShown: false,
+          title: "Criar Atividade",
+          tabBarIcon: ({ color }) => <FontAwesome size={34} name="tasks" color={color} />
+        }}
+      />
+
+      <Tabs.Screen
         name="CriarRubrica"
         options={{
           headerShown: false,
-          title: "Rubrica",
+          title: "Criar Atividade",
+          tabBarIcon: ({ color }) => <FontAwesome size={34} name="tasks" color={color} />
         }}
-      /> */}
+      />
 
-      <Tabs.Screen
+      {/* <Tabs.Screen
         name="listarAtividades"
         options={{
           headerShown: false,
@@ -39,7 +54,27 @@ export default function ProfessorTabsLayout() {
           headerShown: false,
           title: "Feedback",
         }}
+      /> */}
+
+      <Tabs.Screen
+  name="logout"
+  options={{
+    title: "Sair",
+    tabBarIcon: ({ color }) => (
+      <FontAwesome
+        size={28}
+        name="sign-out"
+        color={color}
       />
+    ),
+    tabBarButton: (props) => (
+      <TouchableOpacity
+        {...props}
+        onPress={() => signOut()}
+      />
+    ),
+  }}
+/>
     </Tabs>
   );
 }

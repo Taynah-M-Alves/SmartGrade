@@ -13,8 +13,6 @@ export default function ListarAtividades() {
 
   const { token, user } = useAuth();
 
-  console.log('1234', token)
-
   const [atividades, setAtividades] = useState([]);
 
   async function findAtividades() {
@@ -43,11 +41,23 @@ export default function ListarAtividades() {
 
       console.log(data);
 
+      console.log("teste",
+  JSON.stringify(
+    data[1].submissions,
+    null,
+    2
+  )
+);
+
+      console.log("submis",data.submissions)
+
       console.log("atividades", atividades)
     } catch (error: any) {
       alert(error.message);
     }
   }
+
+  
 
   useEffect(() => {
   if (token && user?.id) {

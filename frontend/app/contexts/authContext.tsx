@@ -65,6 +65,8 @@ export default function AuthProvider({children} : PropsWithChildren){
         } else {
             router.replace("/(protected)/aluno/(tabs)");
         }
+
+        console.log('USUARIO LOGADO!, USUARIO', user)
     }
 
     function signOut() {
@@ -81,6 +83,7 @@ export default function AuthProvider({children} : PropsWithChildren){
             userId: null,
             user: null})
         router.replace("/screens/TelaInicial")
+        console.log('USUARIO DESLOGADO! Usuario', user)
     }
 
     useEffect(() => {

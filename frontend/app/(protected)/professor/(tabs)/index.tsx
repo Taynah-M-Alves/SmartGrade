@@ -56,6 +56,16 @@ export default function ProfessorHome() {
       setAtividades(minhasAtividades);
   
         console.log("data",data);
+
+        console.log("teste",
+  JSON.stringify(
+    data[1].submissions,
+    null,
+    2
+  )
+);
+
+      console.log("submis",data.submissions)
   
         console.log("atividades", atividades)
       } catch (error: any) {
@@ -135,7 +145,19 @@ export default function ProfessorHome() {
 
         {atividades.length > 0 ? (
         atividades.map((item: any) => (
-    <View key={item.id} style={styles.workCard}>
+    <TouchableOpacity
+  key={item.id}
+  style={styles.workCard}
+  activeOpacity={0.8}
+  onPress={() =>
+    router.push({
+      pathname: "/(protected)/professor/Task",
+      params: {
+        task: JSON.stringify(item),
+      },
+    })
+  }
+>
       <View style={styles.workIcon}>
         <Feather
           name="file-text"
@@ -193,7 +215,7 @@ export default function ProfessorHome() {
     color="#fff"
   />
 </TouchableOpacity>
-    </View>
+    </TouchableOpacity>
   ))
 ) : (
   <View
