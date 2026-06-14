@@ -27,6 +27,7 @@ export class SubmissionsController {
     private readonly submissionsService: SubmissionsService,
   ) { }
 
+  
   @Post('/upload')
   @UseInterceptors(
     FileInterceptor('file', {
@@ -79,7 +80,7 @@ export class SubmissionsController {
 
       Number(createSubmissionDto.userId),
 
-      req.user.id,
+      Number(createSubmissionDto.userId)
     );
   }
 
