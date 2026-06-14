@@ -10,6 +10,9 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import Icon from 'react-native-vector-icons/Feather';
 
+// 1. IMPORTAMOS O ROUTER AQUI:
+import { router } from 'expo-router';
+
 import { styles } from '../../../../styles/homeAluno.style';
 
 const activitiesPending = [
@@ -18,18 +21,28 @@ const activitiesPending = [
     title: 'Entrega documentação',
     subject: 'Projeto Integrador',
     deadline: 'Entrega até 26/06/2026',
+    // Adicionei essas informações extras para a TelaEnvio ficar completa:
+    professor: 'João Silva',
+    valor: '8,5 pontos',
+    descricao: 'Nesta atividade, você deve entregar toda a documentação solicitada. Certifique-se de seguir o modelo disponibilizado.'
   },
   {
     id: '2',
     title: 'Relatório de pesquisa',
     subject: 'Metodologia da Pesquisa',
     deadline: 'Entrega até 28/06/2026',
+    professor: 'Ana Costa',
+    valor: '10 pontos',
+    descricao: 'Elabore um relatório detalhado sobre os métodos de pesquisa aplicados durante o semestre.'
   },
   {
     id: '3',
     title: 'Apresentação em vídeo',
     subject: 'Comunicação e Oratória',
     deadline: 'Entrega até 01/07/2026',
+    professor: 'Carlos Mendes',
+    valor: '5 pontos',
+    descricao: 'Grave um vídeo de no máximo 5 minutos aplicando as técnicas de oratória ensinadas na aula 4.'
   },
 ];
 
@@ -123,6 +136,20 @@ export default function HomeAluno() {
           <TouchableOpacity
             key={item.id}
             style={styles.activityCard}
+            // 2. ADICIONAMOS A AÇÃO DE CLIQUE AQUI:
+            onPress={() => {
+              router.push({
+                pathname: '/(protected)/aluno/(tabs)/TelaEnvio',
+                params: {
+                  titulo: item.title,
+                  disciplina: item.subject,
+                  dataEntrega: item.deadline,
+                  professor: item.professor,
+                  valor: item.valor,
+                  descricao: item.descricao,
+                }
+              });
+            }}
           >
             <View style={styles.activityIcon}>
               <Icon
@@ -200,8 +227,6 @@ export default function HomeAluno() {
           </TouchableOpacity>
         ))}
       </ScrollView>
-
-     
     </View>
   );
 }
