@@ -1,7 +1,6 @@
 import { Tabs } from "expo-router";
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useAuth } from "hooks/useAuth";
-import { Pressable } from "react-native";
 
 export default function ProfessorTabsLayout() {
 

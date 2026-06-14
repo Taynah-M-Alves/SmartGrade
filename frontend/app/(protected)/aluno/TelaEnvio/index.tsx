@@ -144,6 +144,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F4F6F8',
     padding: 16,
+    marginVertical: 60
   },
   headerCard: {
     backgroundColor: '#3b82f6',

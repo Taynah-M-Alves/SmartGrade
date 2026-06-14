@@ -10,10 +10,11 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import Icon from 'react-native-vector-icons/Feather';
 
-// 1. IMPORTAMOS O ROUTER AQUI:
+import { useState, useEffect } from 'react';
 import { router } from 'expo-router';
 
 import { styles } from '../../../../styles/homeAluno.style';
+import { useAuth } from 'hooks/useAuth';
 
 const activitiesPending = [
   {
@@ -56,6 +57,46 @@ const activitiesCompleted = [
 ];
 
 export default function HomeAluno() {
+
+  const api = process.env.EXPO_PUBLIC_BASE_URL;
+
+  const { user, token } = useAuth() 
+
+  const [atividades, setAtividades] = useState([]);
+    
+      async function findAtividades() {
+        try {
+          const response = await fetch(`${api}tasks`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          });
+    
+          const data = await response.json();
+    
+          if (!response.ok) {
+            throw new Error(
+              data.message || "Erro ao buscar atividades"
+            );
+          }
+        setAtividades(data);
+
+        } catch (error: any) {
+          alert(error.message);
+        }
+      }
+    
+      useEffect(() => {
+      if (token && user?.id) {
+        findAtividades();
+  
+        console.log("atividadesEffect", atividades)
+      }
+    }, [token, user]);
+
+
   return (
     <View style={styles.container}>
       <ScrollView
@@ -65,7 +106,7 @@ export default function HomeAluno() {
         {/* HEADER */}
         <View style={styles.header}>
           <View style={styles.headerTextContainer}>
-            <Text style={styles.hello}>Olá, João! 👋</Text>
+            <Text style={styles.hello}>Olá, {user?.name}! 👋</Text>
 
             <Text style={styles.title}>
               Bem-vindo ao{'\n'}SmartGrade
@@ -76,12 +117,12 @@ export default function HomeAluno() {
             </Text>
           </View>
 
-          <Image
+          {/* <Image
             source={{
               uri: 'https://i.pravatar.cc/300',
             }}
             style={styles.avatar}
-          />
+          /> */}
         </View>
 
         {/* VISÃO GERAL */}
@@ -124,12 +165,12 @@ export default function HomeAluno() {
         {/* PENDENTES */}
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>
-            Atividades pendentes (7)
+            Atividades pendentes
           </Text>
 
-          <TouchableOpacity>
+          {/* <TouchableOpacity>
             <Text style={styles.seeAll}>Ver todas</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
 
         {activitiesPending.map(item => (
@@ -139,7 +180,7 @@ export default function HomeAluno() {
             // 2. ADICIONAMOS A AÇÃO DE CLIQUE AQUI:
             onPress={() => {
               router.push({
-                pathname: '/(protected)/aluno/(tabs)/TelaEnvio',
+                pathname: '/(protected)/aluno/TelaEnvio',
                 params: {
                   titulo: item.title,
                   disciplina: item.subject,
@@ -181,15 +222,17 @@ export default function HomeAluno() {
           </TouchableOpacity>
         ))}
 
+        {  atividades.map((item: any) => (<Text>{item.title}</Text>))}
+
         {/* CONCLUÍDAS */}
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>
-            Atividades concluídas (5)
+            Atividades concluídas
           </Text>
 
-          <TouchableOpacity>
+          {/* <TouchableOpacity>
             <Text style={styles.seeAll}>Ver todas</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
 
         {activitiesCompleted.map(item => (
