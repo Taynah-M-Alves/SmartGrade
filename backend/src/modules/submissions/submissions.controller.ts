@@ -80,7 +80,7 @@ export class SubmissionsController {
 
       Number(createSubmissionDto.userId),
 
-      Number(createSubmissionDto.userId)
+      req.user.id
     );
   }
 
