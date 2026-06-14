@@ -4,6 +4,7 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
+  FlatList
 } from "react-native";
 
 import {
@@ -14,16 +15,71 @@ import {
   Entypo,
   AntDesign,
 } from "@expo/vector-icons";
+import { router } from "expo-router";
+
+import { useState, useEffect } from "react";
 
 import PageContainer from "components/PageContainer";
 import { useAuth } from "hooks/useAuth";
 
 export default function ProfessorHome() {
-
-  const { user } = useAuth()
+  const api = process.env.EXPO_PUBLIC_BASE_URL;
+  const { user, token } = useAuth()
 
   console.log('user', user)
   console.log('')
+
+  const [atividades, setAtividades] = useState([]);
+  
+    async function findAtividades() {
+      try {
+        const response = await fetch(`${api}tasks`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+  
+        const data = await response.json();
+  
+        if (!response.ok) {
+          throw new Error(
+            data.message || "Erro ao buscar atividades"
+          );
+        }
+  
+        const minhasAtividades = data.filter(
+        (atividade: any) => Number(atividade.createdById) === Number(user?.id)
+      );
+  
+      setAtividades(minhasAtividades);
+  
+        console.log("data",data);
+
+        console.log("teste",
+  JSON.stringify(
+    data[1].submissions,
+    null,
+    2
+  )
+);
+
+      console.log("submis",data.submissions)
+  
+        console.log("atividades", atividades)
+      } catch (error: any) {
+        alert(error.message);
+      }
+    }
+  
+    useEffect(() => {
+    if (token && user?.id) {
+      findAtividades();
+
+      console.log("atividadesEffect", atividades)
+    }
+  }, [token, user]);
   return (
     <View style={styles.container}>
       <ScrollView
@@ -33,10 +89,10 @@ export default function ProfessorHome() {
 
         {/* WELCOME */}
         <View style={styles.welcomeContainer}>
-          <Text style={styles.welcomeText}>BEM-VINDO DE VOLTA</Text>
+          <Text style={styles.welcomeText}>BEM-VINDO(A) DE VOLTA</Text>
 
           <Text style={styles.title}>
-            Bom dia, Professor{"\n"}{user?.nome}
+            Olá Professor(a) {user?.name}
           </Text>
         </View>
 
@@ -44,64 +100,40 @@ export default function ProfessorHome() {
         <TouchableOpacity style={styles.createButton}>
           <AntDesign name="plus" size={24} color="#fff" />
 
-          <Text style={styles.createButtonText}>Criar Rubrica</Text>
+          <Text style={styles.createButtonText}>Nova Atividade</Text>
         </TouchableOpacity>
 
         {/* CARDS */}
         <View style={styles.card}>
           <View style={styles.cardTop}>
-            <MaterialIcons
-              name="assignment-late"
-              size={28}
+
+            <View style={styles.indiceCard}>
+               <MaterialIcons
+              name="assignment-add"
+              size={36}
               color="#3457B1"
             />
-
-            <View style={styles.urgentBadge}>
-              <Text style={styles.badgeText}>URGENTE</Text>
+            <Text style={styles.cardNumber}>{atividades.length}</Text>
             </View>
+           
           </View>
-
-          <Text style={styles.cardNumber}>12</Text>
-          <Text style={styles.cardLabel}>Trabalhos pendentes</Text>
-        </View>
-
-        <View style={styles.card}>
-          <Ionicons name="people" size={28} color="#9B3BB5" />
-
-          <Text style={styles.cardNumber}>148</Text>
-          <Text style={styles.cardLabel}>Alunos ativos</Text>
-        </View>
-
-        <View style={styles.card}>
-          <AntDesign name="star" size={24} color="#A13BB5" />
-
-          <View style={styles.averageRow}>
-            <Text style={styles.cardNumber}>84%</Text>
-
-            <Text style={styles.upText}>↑ 4%</Text>
-          </View>
-
-          <View style={styles.progressBackground}>
-            <View style={styles.progressFill} />
-          </View>
-
-          <Text style={styles.cardLabel}>Média da turma</Text>
+          <Text style={styles.cardLabel}>Trabalhos criados</Text>
         </View>
 
         <View style={styles.card}>
           <AntDesign name="star" size={22} color="#B13BB5" />
 
-          <Text style={styles.cardNumber}>2.4k</Text>
+          <Text style={styles.cardNumber}>{atividades.length}</Text>
 
           <Text style={styles.cardLabel}>
-            Feedbacks de IA gerados
+            Feedbacks gerados
           </Text>
         </View>
 
         {/* SECTION TITLE */}
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>
-            Trabalhos Recentes
+            Minhas Atividades
           </Text>
 
           <TouchableOpacity>
@@ -109,161 +141,108 @@ export default function ProfessorHome() {
           </TouchableOpacity>
         </View>
 
-        {/* WORK CARD 1 */}
-        <View style={styles.workCard}>
-          <View style={styles.workIcon}>
-            <Feather
-              name="file-text"
-              size={24}
-              color="#4C6FFF"
-            />
-          </View>
+       
 
-          <View style={styles.workContent}>
-            <Text style={styles.workTitle}>
-              Intro à Mecânica Quântica - Semestral
+        {atividades.length > 0 ? (
+        atividades.map((item: any) => (
+    <TouchableOpacity
+  key={item.id}
+  style={styles.workCard}
+  activeOpacity={0.8}
+  onPress={() =>
+    router.push({
+      pathname: "/(protected)/professor/Task",
+      params: {
+        task: JSON.stringify(item),
+      },
+    })
+  }
+>
+      <View style={styles.workIcon}>
+        <Feather
+          name="file-text"
+          size={24}
+          color="#4C6FFF"
+        />
+      </View>
+
+      <View style={styles.workContent}>
+        <Text style={styles.workTitle}>
+          {item.title}
+        </Text>
+
+        <Text style={styles.workSubtitle}>
+          {item.description}
+        </Text>
+
+        <View style={styles.workFooter}>
+          <View>
+            <Text style={styles.deliveryNumber}>
+              {item.code}
             </Text>
 
-            <Text style={styles.workSubtitle}>
-              Criado há 2 dias • Departamento de Ciências
+            <Text style={styles.deliveryText}>
+              CÓDIGO
             </Text>
-
-            <View style={styles.workFooter}>
-              <View>
-                <Text style={styles.deliveryNumber}>42/45</Text>
-                <Text style={styles.deliveryText}>
-                  ENTREGAS
-                </Text>
-              </View>
-
-              <View style={styles.status}>
-                <View
-                  style={[
-                    styles.dot,
-                    { backgroundColor: "#C73C3C" },
-                  ]}
-                />
-                <Text style={styles.statusText}>
-                  Corrigindo
-                </Text>
-              </View>
-            </View>
           </View>
 
-          <Entypo
-            name="dots-three-vertical"
-            size={18}
-            color="#444"
-          />
+          <View style={styles.status}>
+            <Text style={styles.statusText}>
+              {new Date(item.deadline).toLocaleDateString(
+                "pt-BR"
+              )}
+            </Text>
+          </View>
         </View>
+      </View>
 
-        {/* WORK CARD 2 */}
-        <View style={styles.workCard}>
-          <View
-            style={[
-              styles.workIcon,
-              { backgroundColor: "#F5E7FA" },
-            ]}
-          >
-            <Feather
-              name="edit"
-              size={24}
-              color="#A13BB5"
-            />
-          </View>
 
-          <View style={styles.workContent}>
-            <Text style={styles.workTitle}>
-              Teoria Literária Moderna: Ensaio Final
-            </Text>
+      <TouchableOpacity
+    style={styles.deleteButton}
+    onPress={() =>
+    router.push({
+      pathname: "/(protected)/professor/Apagaratividade",
+      params: {
+        id: item.id,
+        countSubmission: item.submissions.length
+      },
+    })
+  }
+>
+  <Feather
+    name="trash"
+    size={22}
+    color="#fff"
+  />
+</TouchableOpacity>
+    </TouchableOpacity>
+  ))
+) : (
+  <View
+    style={{
+      marginTop: 30,
+      alignItems: "center",
+      justifyContent: "center",
+    }}
+  >
+    <MaterialIcons
+      name="assignment"
+      size={60}
+      color="#C7CDD8"
+    />
 
-            <Text style={styles.workSubtitle}>
-              Criado há 5 dias • Humanas
-            </Text>
-
-            <View style={styles.workFooter}>
-              <View>
-                <Text style={styles.deliveryNumber}>
-                  128/130
-                </Text>
-                <Text style={styles.deliveryText}>
-                  ENTREGAS
-                </Text>
-              </View>
-
-              <View style={styles.status}>
-                <View
-                  style={[
-                    styles.dot,
-                    { backgroundColor: "#00B884" },
-                  ]}
-                />
-                <Text style={styles.statusText}>
-                  Concluído
-                </Text>
-              </View>
-            </View>
-          </View>
-
-          <Entypo
-            name="dots-three-vertical"
-            size={18}
-            color="#444"
-          />
-        </View>
-
-        {/* WORK CARD 3 */}
-        <View style={styles.workCard}>
-          <View
-            style={[
-              styles.workIcon,
-              { backgroundColor: "#F6D8F7" },
-            ]}
-          >
-            <Feather
-              name="code"
-              size={24}
-              color="#A13BB5"
-            />
-          </View>
-
-          <View style={styles.workContent}>
-            <Text style={styles.workTitle}>
-              Eficiência Algorítmica - Quiz #4
-            </Text>
-
-            <Text style={styles.workSubtitle}>
-              Criado há 1 semana • Ciência da Computação
-            </Text>
-
-            <View style={styles.workFooter}>
-              <View>
-                <Text style={styles.deliveryNumber}>89/90</Text>
-                <Text style={styles.deliveryText}>
-                  ENTREGAS
-                </Text>
-              </View>
-
-              <View style={styles.status}>
-                <View
-                  style={[
-                    styles.dot,
-                    { backgroundColor: "#F0A000" },
-                  ]}
-                />
-                <Text style={styles.statusText}>
-                  Rascunho
-                </Text>
-              </View>
-            </View>
-          </View>
-
-          <Entypo
-            name="dots-three-vertical"
-            size={18}
-            color="#444"
-          />
-        </View>
+    <Text
+      style={{
+        marginTop: 12,
+        fontSize: 16,
+        color: "#666",
+        textAlign: "center",
+      }}
+    >
+      Você ainda não criou nenhuma atividade.
+    </Text>
+  </View>
+)}
       </ScrollView>
     </View>
   );
@@ -272,7 +251,7 @@ export default function ProfessorHome() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // backgroundColor: "#000",
+    marginTop: 50
   },
 
   header: {
@@ -301,6 +280,16 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: "#7F8CFF",
   },
+
+  deleteButton: {
+  width: 45,
+  height: 45,
+  borderRadius: 12,
+  backgroundColor: "#EF4444",
+  justifyContent: "center",
+  alignItems: "center",
+  marginLeft: 10,
+},
 
   welcomeContainer: {
     paddingHorizontal: 25,
@@ -339,6 +328,7 @@ const styles = StyleSheet.create({
   },
 
   card: {
+    display: 'flex',
     backgroundColor: "#F6F6F6",
     marginHorizontal: 20,
     marginTop: 22,
@@ -347,8 +337,18 @@ const styles = StyleSheet.create({
   },
 
   cardTop: {
+    display: 'flex',
     flexDirection: "row",
     justifyContent: "space-between",
+  },
+
+  indiceCard:{
+    height: 'auto',
+    display: 'flex',
+    flexDirection: 'row',
+    gap: 10,
+    alignContent: 'center',
+    justifyContent: 'center'
   },
 
   urgentBadge: {
@@ -495,5 +495,21 @@ const styles = StyleSheet.create({
   statusText: {
     fontWeight: "600",
     color: "#39424E",
+  },
+
+  description: {
+    color: "#4B5563",
+    marginBottom: 10,
+  },
+
+  info: {
+    color: "#6B7280",
+    marginBottom: 4,
+  },
+
+  professor: {
+    marginTop: 8,
+    fontWeight: "600",
+    color: "#111827",
   },
 });

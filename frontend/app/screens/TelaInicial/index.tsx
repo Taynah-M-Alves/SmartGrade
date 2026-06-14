@@ -4,6 +4,7 @@ import {
   Text,
   TouchableOpacity,
   ScrollView,
+  Image
 } from 'react-native';
 
 import Entypo from '@expo/vector-icons/Entypo';
@@ -27,13 +28,18 @@ export default function AuthScreen() {
         contentContainerStyle={styles.content}
       >
         {/* Logo */}
-        <View style={styles.logoContainer}>
-          <View style={styles.logoBox}>
-            <Text style={styles.logoIcon}>🎓</Text>
-          </View>
 
-          <Text style={styles.logoText}>SmartGrade</Text>
-        </View>
+        <Image
+                  source={require("../../../assets/logoCapelo.png")}
+                  style={{
+                    width: 250,
+                    height: 250,
+                    alignSelf: "center",
+                    marginBottom: 0,
+                    marginTop: 0,
+                  }}
+                  resizeMode="contain"
+                />
 
         {/* Hero */}
         <View style={styles.hero}>
@@ -96,7 +102,7 @@ export default function AuthScreen() {
           </View>
 
           <TouchableOpacity
-          onPress={() => router.push('/auth/Cadastro')}>
+          onPress={() => router.navigate('/auth/Cadastro')}>
             <Text style={styles.signupText}>
               Criar conta 
             </Text>

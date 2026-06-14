@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   View,
   FlatList,
@@ -11,9 +11,7 @@ import { useAuth } from "hooks/useAuth";
 export default function ListarAtividades() {
   const api = process.env.EXPO_PUBLIC_BASE_URL;
 
-  const { token } = useAuth();
-
-  console.log('1234', token)
+  const { token, user } = useAuth();
 
   const [atividades, setAtividades] = useState([]);
 
@@ -35,13 +33,37 @@ export default function ListarAtividades() {
         );
       }
 
-      setAtividades(data);
+      const minhasAtividades = data.filter(
+      (atividade: any) => Number(atividade.createdById) === Number(user?.id)
+    );
+
+    setAtividades(minhasAtividades);
 
       console.log(data);
+
+      console.log("teste",
+  JSON.stringify(
+    data[1].submissions,
+    null,
+    2
+  )
+);
+
+      console.log("submis",data.submissions)
+
+      console.log("atividades", atividades)
     } catch (error: any) {
       alert(error.message);
     }
   }
+
+  
+
+  useEffect(() => {
+  if (token && user?.id) {
+    findAtividades();
+  }
+}, [token, user]);
 
   return (
     <View style={styles.container}>
@@ -54,7 +76,8 @@ export default function ListarAtividades() {
         </Text>
       </TouchableOpacity>
 
-      <FlatList
+      {atividades.length > 0 ? (
+        <FlatList
         data={atividades}
         keyExtractor={(item: any) =>
           item.id.toString()
@@ -87,6 +110,11 @@ export default function ListarAtividades() {
           </View>
         )}
       />
+       ) : (
+        <Text>Não foi encontrado nenhuma atividade</Text>
+      )}
+
+      
     </View>
   );
 }
@@ -94,8 +122,8 @@ export default function ListarAtividades() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F9FAFB",
     padding: 16,
+    marginTop: 80
   },
 
   button: {
