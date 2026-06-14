@@ -1,7 +1,7 @@
 import { Tabs } from "expo-router";
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useAuth } from "hooks/useAuth";
-import { TouchableOpacity } from "react-native";
+import { Pressable } from "react-native";
 
 export default function ProfessorTabsLayout() {
 
@@ -21,56 +21,29 @@ export default function ProfessorTabsLayout() {
           tabBarIcon: ({ color }) => <FontAwesome size={34} name="home" color={color} />
         }}
       />
-
       <Tabs.Screen
-        name="CriarRubrica/index"
+        name="CriarAtividade/index"
         options={{
           headerShown: false,
           title: "Criar Atividade",
           tabBarIcon: ({ color }) => <FontAwesome size={34} name="tasks" color={color} />
         }}
       />
-
-      <Tabs.Screen
-        name="CriarRubrica"
-        options={{
-          headerShown: false,
-          title: "Criar Atividade",
-          tabBarIcon: ({ color }) => <FontAwesome size={34} name="tasks" color={color} />
-        }}
-      />
-
-      {/* <Tabs.Screen
-        name="listarAtividades"
-        options={{
-          headerShown: false,
-          title: "Atividades",
-        }}
-      />
-
-      <Tabs.Screen
-        name="Feedback"
-        options={{
-          headerShown: false,
-          title: "Feedback",
-        }}
-      /> */}
-
       <Tabs.Screen
   name="logout"
+  listeners={{
+    tabPress: async (e) => {
+      e.preventDefault();
+      await signOut();
+    },
+  }}
   options={{
-    title: "Sair",
+    title: 'Sair',
     tabBarIcon: ({ color }) => (
       <FontAwesome
-        size={28}
         name="sign-out"
+        size={28}
         color={color}
-      />
-    ),
-    tabBarButton: (props) => (
-      <TouchableOpacity
-        {...props}
-        onPress={() => signOut()}
       />
     ),
   }}
