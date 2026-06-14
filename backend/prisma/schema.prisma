@@ -46,17 +46,18 @@ model TaskCriteria {
 }
 
 model TaskSubmission {
-  id                                    Int      @id @default(autoincrement())
+  id                                    Int              @id @default(autoincrement())
   fileUrl                               String
-  createdAt                             DateTime @default(now())
+  createdAt                             DateTime         @default(now())
   aiFeedback                            String?
   aiGrade                               Float?
   createdById                           Int
   userId                                Int
   taskId                                Int
-  User_TaskSubmission_createdByIdToUser User     @relation("TaskSubmission_createdByIdToUser", fields: [createdById], references: [id])
-  task                                  Task     @relation(fields: [taskId], references: [id])
-  user                                  User     @relation(fields: [userId], references: [id])
+  status                                activity_status? @default(PENDENTE)
+  User_TaskSubmission_createdByIdToUser User             @relation("TaskSubmission_createdByIdToUser", fields: [createdById], references: [id])
+  task                                  Task             @relation(fields: [taskId], references: [id])
+  user                                  User             @relation(fields: [userId], references: [id])
 }
 
 model ParameterSubmission {
@@ -72,4 +73,9 @@ model ParameterSubmission {
 enum Role {
   PROFESSOR
   ALUNO
+}
+
+enum activity_status {
+  PENDENTE
+  FINALIZADO
 }
