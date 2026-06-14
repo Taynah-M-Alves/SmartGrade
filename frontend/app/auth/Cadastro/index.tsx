@@ -113,9 +113,7 @@ await signIn(
 );
     console.log('Resposta cadastro:', data);
 
-    throw new Error(
-      data.message || 'Erro ao realizar cadastro'
-    );
+    
   } catch (error: any) {
     console.error(error);
 
