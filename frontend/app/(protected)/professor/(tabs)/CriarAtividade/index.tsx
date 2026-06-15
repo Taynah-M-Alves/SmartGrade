@@ -1,400 +1,458 @@
-import React, { useState } from 'react';
 import {
   View,
   Text,
-  TextInput,
+  StyleSheet,
   ScrollView,
   TouchableOpacity,
+  TextInput,
   Alert,
-  KeyboardAvoidingView,
+  ActivityIndicator,
   Platform,
-} from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import { Ionicons, MaterialIcons, Feather } from '@expo/vector-icons';
-import styles from '../../../../../styles/criarAtividade.styles';
+} from "react-native";
 
-// ─── Types ────────────────────────────────────────────────────────────────────
+import { Ionicons, AntDesign, Feather } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
+import { useState } from "react";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import { useAuth } from "hooks/useAuth";
 
-interface FormData {
-  nome: string;
-  descricao: string;
-  prazo: string;
-}
-
-interface RubricaForm {
-  titulo: string;
-  peso: string;
-  descricao: string;
-}
-
-interface Rubrica extends RubricaForm {
+type Criterio = {
   id: string;
-}
+  title: string;
+  weight: string;
+  description: string;
+};
 
-// ─── Screen ───────────────────────────────────────────────────────────────────
+export default function CriarAtividade() {
+  const api = process.env.EXPO_PUBLIC_BASE_URL;
+  const { token } = useAuth();
 
-export default function CriarAtividadeScreen() {
-  const [etapa, setEtapa] = useState<1 | 2>(1);
+  const [etapa, setEtapa] = useState<"task" | "criterios" | "done">("task");
+  const [loading, setLoading] = useState(false);
 
-  const [formData, setFormData] = useState<FormData>({
-    nome: '',
-    descricao: '',
-    prazo: '',
-  });
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
 
-  const [rubricaForm, setRubricaForm] = useState<RubricaForm>({
-    titulo: '',
-    peso: '',
-    descricao: '',
-  });
+  const [deadline, setDeadline] = useState<Date>(new Date());
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [dateSelected, setDateSelected] = useState(false);
 
-  const [rubricas, setRubricas] = useState<Rubrica[]>([]);
+  const [taskCriada, setTaskCriada] = useState<any>(null);
 
-  // ── Handlers ────────────────────────────────────────────────────────────────
+  const [criterios, setCriterios] = useState<Criterio[]>([
+    { id: Date.now().toString(), title: "", weight: "", description: "" },
+  ]);
 
-  const handleContinuar = () => {
-    if (!formData.nome.trim()) {
-      Alert.alert('Campo obrigatório', 'Preencha o nome da atividade.');
-      return;
+  const formatDateDisplay = (date: Date) =>
+    date.toLocaleDateString("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
+
+  const onChangeDate = (_: any, selectedDate?: Date) => {
+    setShowDatePicker(Platform.OS === "ios");
+    if (selectedDate) {
+      selectedDate.setHours(23, 59, 59, 0);
+      setDeadline(selectedDate);
+      setDateSelected(true);
     }
-    if (!formData.descricao.trim()) {
-      Alert.alert('Campo obrigatório', 'Preencha a descrição da atividade.');
-      return;
-    }
-    if (!formData.prazo.trim()) {
-      Alert.alert('Campo obrigatório', 'Informe o prazo de entrega.');
-      return;
-    }
-    setEtapa(2);
   };
 
-  const handleAdicionarRubrica = () => {
-    if (!rubricaForm.titulo.trim()) {
-      Alert.alert('Campo obrigatório', 'Preencha o título da rubrica.');
-      return;
-    }
-    if (!rubricaForm.peso.trim()) {
-      Alert.alert('Campo obrigatório', 'Informe o peso (%).');
-      return;
-    }
-    if (!rubricaForm.descricao.trim()) {
-      Alert.alert('Campo obrigatório', 'Preencha a descrição da rubrica.');
-      return;
-    }
+  const updateCriterio = (id: string, field: keyof Criterio, value: string) => {
+    setCriterios((prev) =>
+      prev.map((c) => (c.id === id ? { ...c, [field]: value } : c))
+    );
+  };
 
-    setRubricas(prev => [
+  const addCriterio = () => {
+    setCriterios((prev) => [
       ...prev,
-      { id: Date.now().toString(), ...rubricaForm },
+      { id: Date.now().toString(), title: "", weight: "", description: "" },
     ]);
-    setRubricaForm({ titulo: '', peso: '', descricao: '' });
   };
 
-  const handleRemoverRubrica = (id: string) => {
-    setRubricas(prev => prev.filter(r => r.id !== id));
+  const removeCriterio = (id: string) => {
+    if (criterios.length === 1) return;
+    setCriterios((prev) => prev.filter((c) => c.id !== id));
   };
 
-  const handleCriarAtividade = () => {
-    if (rubricas.length === 0) {
-      Alert.alert('Atenção', 'Adicione pelo menos uma rubrica antes de criar a atividade.');
+  const handleCriarTask = async () => {
+    if (!title.trim() || !description.trim()) {
+      Alert.alert("Campos obrigatórios", "Preencha título e descrição.");
       return;
     }
-    Alert.alert('Sucesso! 🎉', 'Atividade criada com sucesso!');
+    if (!dateSelected) {
+      Alert.alert("Prazo obrigatório", "Selecione o prazo de entrega.");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const response = await fetch(`${api}tasks`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          title: title.trim(),
+          description: description.trim(),
+          deadline: deadline.toISOString(),
+        }),
+      });
+
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message || "Erro ao criar atividade.");
+
+      setTaskCriada(data);
+      setEtapa("criterios");
+    } catch (error: any) {
+      Alert.alert("Erro", error.message || "Não foi possível criar a atividade.");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // ── Render ──────────────────────────────────────────────────────────────────
+  const handleCriarCriterios = async () => {
+    const validos = criterios.filter(
+      (c) => c.title.trim() && c.description.trim() && c.weight.trim()
+    );
+
+    if (validos.length === 0) {
+      Alert.alert("Atenção", "Adicione pelo menos um critério completo.");
+      return;
+    }
+
+    const pesoInvalido = validos.find(
+      (c) => isNaN(Number(c.weight)) || Number(c.weight) <= 0
+    );
+    if (pesoInvalido) {
+      Alert.alert("Peso inválido", "O peso deve ser um número maior que 0.");
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      const requests = validos.map((c) =>
+        fetch(`${api}task-criteria`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            title: c.title.trim(),
+            weight: Number(c.weight),
+            description: c.description.trim(),
+            taskId: taskCriada.id,
+          }),
+        }).then((r) => r.json())
+      );
+
+      const results = await Promise.all(requests);
+      const erro = results.find((r: any) => r.statusCode >= 400);
+      if (erro) throw new Error(erro.message || "Erro ao criar critério.");
+
+      setEtapa("done");
+    } catch (error: any) {
+      Alert.alert("Erro", error.message || "Não foi possível criar os critérios.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleReset = () => {
+    setTitle("");
+    setDescription("");
+    setDeadline(new Date());
+    setDateSelected(false);
+    setTaskCriada(null);
+    setCriterios([{ id: Date.now().toString(), title: "", weight: "", description: "" }]);
+    setEtapa("task");
+  };
+
+  if (etapa === "done") {
+    return (
+      <View style={styles.doneContainer}>
+        <Ionicons name="checkmark-circle" size={72} color="#6C5CE7" />
+        <Text style={styles.doneTitle}>Atividade criada!</Text>
+        <Text style={styles.doneSub}>
+          A atividade <Text style={{ fontWeight: "700" }}>{taskCriada?.title}</Text> e seus
+          critérios foram salvos com sucesso.
+        </Text>
+        <View style={styles.doneCodeBox}>
+          <Text style={styles.doneCodeLabel}>Código da atividade</Text>
+          <Text style={styles.doneCode}>{taskCriada?.code}</Text>
+        </View>
+        <TouchableOpacity style={styles.button} onPress={handleReset}>
+          <AntDesign name="plus" size={18} color="#FFF" />
+          <Text style={styles.buttonText}>Criar outra atividade</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
 
   return (
-    <View style={{ flex: 1 }}>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.content}
+      keyboardShouldPersistTaps="handled"
+    >
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>Nova Atividade</Text>
+      </View>
 
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      <LinearGradient
+        colors={["#7C6CF7", "#6557E8"]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.bannerCard}
       >
-        <ScrollView
-          style={styles.container}
-          contentContainerStyle={{ paddingBottom: 140 }}
-          showsVerticalScrollIndicator={false}
-          keyboardShouldPersistTaps="handled"
-        >
-          {/* ── Page Title ── */}
-          <View style={styles.pageTitleBlock}>
-            <Text style={styles.pageTitle}>Criar Atividade</Text>
-            <Text style={styles.pageSubtitle}>
-              Configure os dados e critérios de avaliação
+        <View style={styles.iconBox}>
+          <Ionicons name="document-text-outline" size={22} color="#6C5CE7" />
+        </View>
+        <View style={{ flex: 1 }}>
+          <Text style={styles.bannerTitle}>
+            {etapa === "task" ? "Dados da atividade" : "Critérios de avaliação"}
+          </Text>
+          <Text style={styles.bannerSub}>
+            {etapa === "task"
+              ? "Passo 1 de 2 — preencha as informações básicas"
+              : `Passo 2 de 2 — atividade "${taskCriada?.title}" criada ✓`}
+          </Text>
+        </View>
+      </LinearGradient>
+
+      {etapa === "task" && (
+        <View style={styles.formCard}>
+          <Text style={styles.label}>Título *</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Ex: Entrega do projeto final"
+            placeholderTextColor="#AAA"
+            value={title}
+            onChangeText={setTitle}
+          />
+
+          <Text style={styles.label}>Descrição *</Text>
+          <TextInput
+            style={[styles.input, styles.textArea]}
+            placeholder="Ex: Enviar PDF com a documentação completa"
+            placeholderTextColor="#AAA"
+            value={description}
+            onChangeText={setDescription}
+            multiline
+            numberOfLines={4}
+            textAlignVertical="top"
+          />
+
+          <Text style={styles.label}>Prazo de entrega *</Text>
+          <TouchableOpacity
+            style={[styles.input, styles.dateButton]}
+            onPress={() => setShowDatePicker(true)}
+          >
+            <Ionicons
+              name="calendar-outline"
+              size={20}
+              color={dateSelected ? "#6C5CE7" : "#AAA"}
+            />
+            <Text style={[styles.dateText, !dateSelected && styles.datePlaceholder]}>
+              {dateSelected ? formatDateDisplay(deadline) : "Selecionar data"}
             </Text>
-          </View>
+          </TouchableOpacity>
 
-          {/* ── Progress Card ── */}
-          <View style={styles.card}>
-            <View style={styles.stepsRow}>
-              {/* Step 1 */}
-              <View style={styles.stepItem}>
-                {etapa > 1 ? (
-                  <LinearGradient
-                    colors={['#2563EB', '#9333EA']}
-                    style={styles.stepCircleActive}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 1 }}
-                  >
-                    <Ionicons name="checkmark" size={13} color="#fff" />
-                  </LinearGradient>
-                ) : etapa === 1 ? (
-                  <LinearGradient
-                    colors={['#2563EB', '#9333EA']}
-                    style={styles.stepCircleActive}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 1 }}
-                  >
-                    <Text style={styles.stepNumberActive}>1</Text>
-                  </LinearGradient>
-                ) : (
-                  <View style={styles.stepCircleInactive}>
-                    <Text style={styles.stepNumberInactive}>1</Text>
-                  </View>
+          {showDatePicker && (
+            <DateTimePicker
+              value={deadline}
+              mode="date"
+              display={Platform.OS === "ios" ? "spinner" : "default"}
+              minimumDate={new Date()}
+              onChange={onChangeDate}
+              locale="pt-BR"
+            />
+          )}
+
+          <TouchableOpacity
+            style={[styles.button, loading && styles.buttonDisabled]}
+            onPress={handleCriarTask}
+            disabled={loading}
+          >
+            {loading ? (
+              <ActivityIndicator color="#FFF" />
+            ) : (
+              <>
+                <Text style={styles.buttonText}>Próximo — Critérios</Text>
+                <Ionicons name="arrow-forward" size={18} color="#FFF" />
+              </>
+            )}
+          </TouchableOpacity>
+        </View>
+      )}
+
+      {etapa === "criterios" && (
+        <>
+          {criterios.map((criterio, index) => (
+            <View key={criterio.id} style={styles.criterioCard}>
+              <View style={styles.criterioHeader}>
+                <Text style={styles.criterioTitle}>Critério {index + 1}</Text>
+                {criterios.length > 1 && (
+                  <TouchableOpacity onPress={() => removeCriterio(criterio.id)}>
+                    <Feather name="trash-2" size={18} color="#EF4444" />
+                  </TouchableOpacity>
                 )}
-                <Text style={[styles.stepLabel, etapa === 1 && styles.stepLabelActive]}>
-                  Dados da atividade
-                </Text>
               </View>
 
-              <View style={styles.stepConnector} />
+              <Text style={styles.label}>Título *</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Ex: Formatação ABNT"
+                placeholderTextColor="#AAA"
+                value={criterio.title}
+                onChangeText={(v) => updateCriterio(criterio.id, "title", v)}
+              />
 
-              {/* Step 2 */}
-              <View style={styles.stepItem}>
-                {etapa === 2 ? (
-                  <LinearGradient
-                    colors={['#2563EB', '#9333EA']}
-                    style={styles.stepCircleActive}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 1 }}
-                  >
-                    <Text style={styles.stepNumberActive}>2</Text>
-                  </LinearGradient>
-                ) : (
-                  <View style={styles.stepCircleInactive}>
-                    <Text style={styles.stepNumberInactive}>2</Text>
-                  </View>
-                )}
-                <Text style={[styles.stepLabel, etapa === 2 && styles.stepLabelActive]}>
-                  Rubricas
-                </Text>
-              </View>
-            </View>
+              <Text style={styles.label}>Descrição *</Text>
+              <TextInput
+                style={[styles.input, styles.textArea]}
+                placeholder="Ex: Documento deve seguir normas ABNT"
+                placeholderTextColor="#AAA"
+                value={criterio.description}
+                onChangeText={(v) => updateCriterio(criterio.id, "description", v)}
+                multiline
+                numberOfLines={3}
+                textAlignVertical="top"
+              />
 
-            {/* Progress bar */}
-            <View style={styles.progressBarBg}>
-              <LinearGradient
-                colors={['#2563EB', '#9333EA']}
-                style={[styles.progressBarFill, { width: etapa === 1 ? '50%' : '100%' }]}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 0 }}
+              <Text style={styles.label}>Peso *</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Ex: 2"
+                placeholderTextColor="#AAA"
+                value={criterio.weight}
+                onChangeText={(v) => updateCriterio(criterio.id, "weight", v)}
+                keyboardType="numeric"
               />
             </View>
-          </View>
+          ))}
 
-          {/* ══════════════════ ETAPA 1 ══════════════════ */}
-          {etapa === 1 && (
-            <View style={styles.card}>
-              <Text style={styles.sectionTitle}>Dados da atividade</Text>
+          <TouchableOpacity style={styles.addButton} onPress={addCriterio}>
+            <AntDesign name="plus" size={18} color="#6C5CE7" />
+            <Text style={styles.addButtonText}>Adicionar critério</Text>
+          </TouchableOpacity>
 
-              {/* Nome */}
-              <View style={styles.fieldBlock}>
-                <Text style={styles.label}>
-                  Nome da atividade <Text style={styles.required}>*</Text>
-                </Text>
-                <TextInput
-                  style={styles.input}
-                  placeholder="Ex.: Trabalho de Macroeconomia"
-                  placeholderTextColor="#9CA3AF"
-                  value={formData.nome}
-                  onChangeText={t => setFormData(p => ({ ...p, nome: t }))}
-                />
-              </View>
-
-              {/* Descrição */}
-              <View style={styles.fieldBlock}>
-                <Text style={styles.label}>
-                  Descrição <Text style={styles.required}>*</Text>
-                </Text>
-                <TextInput
-                  style={[styles.input, styles.inputMultiline]}
-                  placeholder="Descreva os objetivos e detalhes da atividade..."
-                  placeholderTextColor="#9CA3AF"
-                  multiline
-                  maxLength={500}
-                  value={formData.descricao}
-                  onChangeText={t => setFormData(p => ({ ...p, descricao: t }))}
-                  textAlignVertical="top"
-                />
-                <Text style={styles.charCount}>{formData.descricao.length}/500</Text>
-              </View>
-
-              {/* Prazo */}
-              <View style={styles.fieldBlock}>
-                <Text style={styles.label}>
-                  Prazo de entrega <Text style={styles.required}>*</Text>
-                </Text>
-                <View style={styles.inputIconWrapper}>
-                  <Feather
-                    name="calendar"
-                    size={16}
-                    color="#9CA3AF"
-                    style={styles.inputIconLeft}
-                  />
-                  <TextInput
-                    style={[styles.input, styles.inputWithIcon]}
-                    placeholder="Selecione a data e hora"
-                    placeholderTextColor="#9CA3AF"
-                    value={formData.prazo}
-                    onChangeText={t => setFormData(p => ({ ...p, prazo: t }))}
-                  />
-                </View>
-              </View>
-
-              {/* CTA */}
-              <TouchableOpacity onPress={handleContinuar} activeOpacity={0.85}>
-                <LinearGradient
-                  colors={['#2563EB', '#9333EA']}
-                  style={styles.btnGradient}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 0 }}
-                >
-                  <Text style={styles.btnGradientText}>Continuar para Rubricas</Text>
-                </LinearGradient>
-              </TouchableOpacity>
-            </View>
-          )}
-
-          {/* ══════════════════ ETAPA 2 ══════════════════ */}
-          {etapa === 2 && (
-            <>
-              {/* Formulário de rubrica */}
-              <View style={styles.card}>
-                <Text style={styles.sectionTitle}>Rubricas de avaliação</Text>
-                <Text style={styles.sectionSubtitle}>
-                  Adicione critérios e pesos para avaliar esta atividade.
-                </Text>
-
-                {/* Título da rubrica */}
-                <View style={styles.fieldBlock}>
-                  <Text style={styles.label}>
-                    Título da rubrica <Text style={styles.required}>*</Text>
-                  </Text>
-                  <TextInput
-                    style={styles.input}
-                    placeholder="Ex.: Clareza dos argumentos"
-                    placeholderTextColor="#9CA3AF"
-                    value={rubricaForm.titulo}
-                    onChangeText={t => setRubricaForm(p => ({ ...p, titulo: t }))}
-                  />
-                </View>
-
-                {/* Peso + Descrição */}
-                <View style={styles.rowFields}>
-                  <View style={[styles.fieldBlock, styles.fieldPeso]}>
-                    <Text style={styles.label}>
-                      Peso (%) <Text style={styles.required}>*</Text>
-                    </Text>
-                    <TextInput
-                      style={styles.input}
-                      placeholder="Ex.: 25"
-                      placeholderTextColor="#9CA3AF"
-                      keyboardType="numeric"
-                      value={rubricaForm.peso}
-                      onChangeText={t => setRubricaForm(p => ({ ...p, peso: t }))}
-                    />
-                  </View>
-
-                  <View style={[styles.fieldBlock, styles.fieldDescRubrica]}>
-                    <Text style={styles.label}>
-                      Descrição da rubrica <Text style={styles.required}>*</Text>
-                    </Text>
-                    <TextInput
-                      style={[styles.input, { minHeight: 48 }]}
-                      placeholder="Descreva o que será avaliado..."
-                      placeholderTextColor="#9CA3AF"
-                      multiline
-                      value={rubricaForm.descricao}
-                      onChangeText={t => setRubricaForm(p => ({ ...p, descricao: t }))}
-                      textAlignVertical="top"
-                    />
-                  </View>
-                </View>
-
-                {/* Adicionar rubrica */}
-                <TouchableOpacity onPress={handleAdicionarRubrica} activeOpacity={0.85}>
-                  <LinearGradient
-                    colors={['#2563EB', '#9333EA']}
-                    style={styles.btnGradient}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 0 }}
-                  >
-                    <Text style={styles.btnGradientText}>Adicionar Rubrica</Text>
-                  </LinearGradient>
-                </TouchableOpacity>
-              </View>
-
-              {/* Lista de rubricas */}
-              {rubricas.length > 0 && (
-                <View style={styles.card}>
-                  <Text style={styles.sectionTitle}>
-                    Rubricas adicionadas ({rubricas.length})
-                  </Text>
-
-                  {rubricas.map((rubrica, index) => (
-                    <View key={rubrica.id} style={styles.rubricaCard}>
-                      <LinearGradient
-                        colors={['#2563EB', '#9333EA']}
-                        style={styles.rubricaNumCircle}
-                        start={{ x: 0, y: 0 }}
-                        end={{ x: 1, y: 1 }}
-                      >
-                        <Text style={styles.rubricaNumText}>{index + 1}</Text>
-                      </LinearGradient>
-
-                      <View style={styles.rubricaInfo}>
-                        <Text style={styles.rubricaTitulo}>{rubrica.titulo}</Text>
-                        <Text style={styles.rubricaPeso}>Peso: {rubrica.peso}%</Text>
-                        <Text style={styles.rubricaDescricao}>{rubrica.descricao}</Text>
-                      </View>
-
-                      <TouchableOpacity
-                        onPress={() => handleRemoverRubrica(rubrica.id)}
-                        hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-                      >
-                        <MaterialIcons name="delete-outline" size={22} color="#EF4444" />
-                      </TouchableOpacity>
-                    </View>
-                  ))}
-                </View>
-              )}
-
-              {/* Criar Atividade */}
-              <TouchableOpacity onPress={handleCriarAtividade} activeOpacity={0.85}>
-                <LinearGradient
-                  colors={['#2563EB', '#9333EA']}
-                  style={styles.btnGradient}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 0 }}
-                >
-                  <Text style={styles.btnGradientText}>Criar Atividade</Text>
-                </LinearGradient>
-              </TouchableOpacity>
-
-              {/* Voltar */}
-              <TouchableOpacity
-                onPress={() => setEtapa(1)}
-                style={styles.btnBack}
-                activeOpacity={0.7}
-              >
-                <Ionicons name="arrow-back-outline" size={15} color="#6B7280" />
-                <Text style={styles.btnBackText}>Voltar para Dados da atividade</Text>
-              </TouchableOpacity>
-            </>
-          )}
-        </ScrollView>
-      </KeyboardAvoidingView>
-
-    </View>
+          <TouchableOpacity
+            style={[styles.button, loading && styles.buttonDisabled]}
+            onPress={handleCriarCriterios}
+            disabled={loading}
+          >
+            {loading ? (
+              <ActivityIndicator color="#FFF" />
+            ) : (
+              <>
+                <Ionicons name="checkmark-circle-outline" size={20} color="#FFF" />
+                <Text style={styles.buttonText}>Concluir e salvar</Text>
+              </>
+            )}
+          </TouchableOpacity>
+        </>
+      )}
+    </ScrollView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: "#F5F6FA" },
+  content: { padding: 18, paddingBottom: 60 },
+  header: { marginTop: 50, marginBottom: 18 },
+  headerTitle: { fontSize: 22, fontWeight: "700", color: "#2D3436" },
+  bannerCard: {
+    borderRadius: 20,
+    padding: 18,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 14,
+    marginBottom: 20,
+  },
+  iconBox: {
+    width: 44,
+    height: 44,
+    borderRadius: 12,
+    backgroundColor: "#FFF",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  bannerTitle: { color: "#FFF", fontSize: 16, fontWeight: "700" },
+  bannerSub: { color: "#EAE6FF", fontSize: 12, marginTop: 2 },
+  formCard: { backgroundColor: "#FFF", borderRadius: 18, padding: 18, marginBottom: 20 },
+  criterioCard: { backgroundColor: "#FFF", borderRadius: 18, padding: 18, marginBottom: 14 },
+  criterioHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 4,
+  },
+  criterioTitle: { fontWeight: "700", fontSize: 15, color: "#2D3436" },
+  label: { fontSize: 13, fontWeight: "600", color: "#555", marginBottom: 6, marginTop: 12 },
+  input: {
+    backgroundColor: "#F5F6FA",
+    borderRadius: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    fontSize: 14,
+    color: "#2D3436",
+    borderWidth: 1,
+    borderColor: "#ECECEC",
+  },
+  textArea: { height: 90, paddingTop: 12 },
+  dateButton: { flexDirection: "row", alignItems: "center", gap: 10 },
+  dateText: { fontSize: 14, color: "#2D3436" },
+  datePlaceholder: { color: "#AAA" },
+  button: {
+    backgroundColor: "#6C5CE7",
+    borderRadius: 16,
+    paddingVertical: 16,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 8,
+    marginTop: 18,
+  },
+  buttonDisabled: { opacity: 0.6 },
+  buttonText: { color: "#FFF", fontWeight: "700", fontSize: 16 },
+  addButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+    paddingVertical: 14,
+    borderRadius: 14,
+    borderWidth: 1.5,
+    borderColor: "#6C5CE7",
+    borderStyle: "dashed",
+    marginBottom: 4,
+  },
+  addButtonText: { color: "#6C5CE7", fontWeight: "600", fontSize: 15 },
+  doneContainer: {
+    flex: 1,
+    backgroundColor: "#F5F6FA",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 32,
+  },
+  doneTitle: { fontSize: 26, fontWeight: "800", color: "#2D3436", marginBottom: 10, marginTop: 16 },
+  doneSub: { fontSize: 15, color: "#666", textAlign: "center", lineHeight: 22, marginBottom: 24 },
+  doneCodeBox: {
+    backgroundColor: "#FFF",
+    borderRadius: 16,
+    paddingVertical: 16,
+    paddingHorizontal: 28,
+    alignItems: "center",
+    marginBottom: 32,
+    borderWidth: 1,
+    borderColor: "#E8E5FF",
+  },
+  doneCodeLabel: { fontSize: 12, color: "#888", marginBottom: 6 },
+  doneCode: { fontSize: 22, fontWeight: "800", color: "#6C5CE7", letterSpacing: 2 },
+});

@@ -26,9 +26,6 @@ export default function ProfessorHome() {
   const api = process.env.EXPO_PUBLIC_BASE_URL;
   const { user, token } = useAuth()
 
-  console.log('user', user)
-  console.log('')
-
   const [atividades, setAtividades] = useState([]);
   
     async function findAtividades() {
@@ -97,7 +94,7 @@ export default function ProfessorHome() {
         </View>
 
         {/* BUTTON */}
-        <TouchableOpacity style={styles.createButton}>
+        <TouchableOpacity style={styles.createButton} onPress={() => router.push('(protected)/professor/(tabs)/CriarAtividade')}>
           <AntDesign name="plus" size={24} color="#fff" />
 
           <Text style={styles.createButtonText}>Nova Atividade</Text>
@@ -109,10 +106,10 @@ export default function ProfessorHome() {
 
             <View style={styles.indiceCard}>
                <MaterialIcons
-              name="assignment-add"
-              size={36}
-              color="#3457B1"
-            />
+                  name="assignment-add"
+                  size={50}
+                  color="#3457B1"
+                />
             <Text style={styles.cardNumber}>{atividades.length}</Text>
             </View>
            
@@ -121,10 +118,12 @@ export default function ProfessorHome() {
         </View>
 
         <View style={styles.card}>
-          <AntDesign name="star" size={22} color="#B13BB5" />
+          <View style={styles.cardTop}>
+           <View style={styles.indiceCard}>
+              <AntDesign name="star" size={50} color="#B13BB5" />
 
-          <Text style={styles.cardNumber}>{atividades.length}</Text>
-
+              <Text style={styles.cardNumber}>{atividades.length}</Text>
+</View></View>
           <Text style={styles.cardLabel}>
             Feedbacks gerados
           </Text>
@@ -195,26 +194,6 @@ export default function ProfessorHome() {
           </View>
         </View>
       </View>
-
-
-      <TouchableOpacity
-    style={styles.deleteButton}
-    onPress={() =>
-    router.push({
-      pathname: "/(protected)/professor/Apagaratividade",
-      params: {
-        id: item.id,
-        countSubmission: item.submissions.length
-      },
-    })
-  }
->
-  <Feather
-    name="trash"
-    size={22}
-    color="#fff"
-  />
-</TouchableOpacity>
     </TouchableOpacity>
   ))
 ) : (
@@ -368,7 +347,7 @@ const styles = StyleSheet.create({
     fontSize: 40,
     fontWeight: "800",
     color: "#303844",
-    marginTop: 12,
+    marginTop: 0,
   },
 
   cardLabel: {

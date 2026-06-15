@@ -13,6 +13,8 @@ import {
   SocialButton,
   SocialText,
   FooterText,
+  FooterLink,
+  FooterContainer,
 } from '../../../styles/login.styles';
 import {router} from 'expo-router'
 import { Text, Alert, TouchableOpacity, Image  } from 'react-native';
@@ -104,9 +106,15 @@ export default function Login() {
           <ButtonText>{loading ? "Entrando..." : "Entrar"}</ButtonText>
         </Button>
 
-        <FooterText>
-          Não tem uma conta? <TouchableOpacity onPress={() => router.push('/auth/Cadastro')}><Text>Criar conta</Text></TouchableOpacity>
-        </FooterText>
+        <FooterContainer>
+          <FooterText>Não tem uma conta? </FooterText>
+
+          <TouchableOpacity
+            onPress={() => router.push('/auth/Cadastro')}
+          >
+            <FooterLink>Criar conta</FooterLink>
+          </TouchableOpacity>
+        </FooterContainer>
 
   
       </Card>

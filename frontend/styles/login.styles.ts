@@ -96,9 +96,14 @@ export const SocialText = styled.Text`
   color: #2d3436;
 `;
 
-export const FooterText = styled.Text`
-  text-align: center;
+export const FooterContainer = styled.View`
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
   margin-top: 15px;
+`;
+
+export const FooterText = styled.Text`
   color: #636e72;
 `;
 

@@ -16,6 +16,23 @@ import { router } from 'expo-router';
 import { styles } from '../../../../styles/homeAluno.style';
 import { useAuth } from 'hooks/useAuth';
 
+type Activity = {
+  id: number;
+  title: string;
+  description: string;
+  code: string;
+  deadline: string;
+  createdBy: {
+    id: number;
+    name: string;
+    email: string;
+    role: string;
+  };
+  submissions: any[];
+};
+
+
+
 const activitiesPending = [
   {
     id: '1',
@@ -58,11 +75,11 @@ const activitiesCompleted = [
 
 export default function HomeAluno() {
 
+  const [atividades, setAtividades] = useState<Activity[]>([]);
+
   const api = process.env.EXPO_PUBLIC_BASE_URL;
 
   const { user, token } = useAuth() 
-
-  const [atividades, setAtividades] = useState([]);
     
       async function findAtividades() {
         try {
@@ -117,12 +134,7 @@ export default function HomeAluno() {
             </Text>
           </View>
 
-          {/* <Image
-            source={{
-              uri: 'https://i.pravatar.cc/300',
-            }}
-            style={styles.avatar}
-          /> */}
+
         </View>
 
         {/* VISÃO GERAL */}
@@ -168,77 +180,65 @@ export default function HomeAluno() {
             Atividades pendentes
           </Text>
 
-          {/* <TouchableOpacity>
-            <Text style={styles.seeAll}>Ver todas</Text>
-          </TouchableOpacity> */}
         </View>
 
-        {activitiesPending.map(item => (
+        {atividades.map(item => (
           <TouchableOpacity
-            key={item.id}
-            style={styles.activityCard}
-            // 2. ADICIONAMOS A AÇÃO DE CLIQUE AQUI:
-            onPress={() => {
-              router.push({
-                pathname: '/(protected)/aluno/TelaEnvio',
-                params: {
-                  titulo: item.title,
-                  disciplina: item.subject,
-                  dataEntrega: item.deadline,
-                  professor: item.professor,
-                  valor: item.valor,
-                  descricao: item.descricao,
-                }
-              });
-            }}
-          >
-            <View style={styles.activityIcon}>
-              <Icon
-                name="file-text"
-                size={20}
-                color="#6D5DF6"
-              />
-            </View>
+              key={item.id}
+              style={styles.activityCard}
+              onPress={() => {
+                router.push({
+                  pathname: "/(protected)/aluno/TelaEnvio",
+                  params: {
+                    atividade: JSON.stringify(item),
+                  },
+                });
+              }}
+            >
+              <View style={styles.activityIcon}>
+                <Icon
+                  name="file-text"
+                  size={20}
+                  color="#6D5DF6"
+                />
+              </View>
 
-            <View style={styles.activityInfo}>
-              <Text style={styles.activityTitle}>
-                {item.title}
-              </Text>
+              <View style={styles.activityInfo}>
+                <Text style={styles.activityTitle}>
+                  {item.title}
+                </Text>
 
-              <Text style={styles.activitySubject}>
-                {item.subject}
-              </Text>
+                <Text style={styles.activitySubject}>
+                  Professor: {item.createdBy.name}
+                </Text>
 
-              <Text style={styles.deadline}>
-                {item.deadline}
-              </Text>
-            </View>
+                <Text style={styles.deadline}>
+                  Entrega até{" "}
+                  {new Date(item.deadline).toLocaleDateString(
+                    "pt-BR"
+                  )}
+                </Text>
+              </View>
 
-            <View style={styles.statusPending}>
-              <Text style={styles.statusPendingText}>
-                Pendente
-              </Text>
-            </View>
-          </TouchableOpacity>
-        ))}
+              <View style={styles.statusPending}>
+                <Text style={styles.statusPendingText}>
+                  Pendente
+                </Text>
+              </View>
+            </TouchableOpacity>
+            ))}
 
-        {  atividades.map((item: any) => (<Text>{item.title}</Text>))}
-
-        {/* CONCLUÍDAS */}
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>
             Atividades concluídas
           </Text>
-
-          {/* <TouchableOpacity>
-            <Text style={styles.seeAll}>Ver todas</Text>
-          </TouchableOpacity> */}
         </View>
 
         {activitiesCompleted.map(item => (
           <TouchableOpacity
             key={item.id}
             style={styles.activityCard}
+            onPress={() => router.push('/(protected)/aluno/Feedback')}
           >
             <View style={styles.activityIconSuccess}>
               <Icon

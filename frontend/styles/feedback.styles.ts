@@ -1,389 +1,236 @@
 import { StyleSheet } from "react-native";
 
-export const colors = {
-  primary: "#2F5BB7",
-  secondary: "#9C27B0",
-
-  background: "#F4F5FA",
-  white: "#FFFFFF",
-
-  text: "#222222",
-  gray: "#666666",
-  lightGray: "#E5E7EB",
-
-  success: "#22C55E",
-  danger: "#EF4444",
-  warning: "#F59E0B",
-
-  purpleLight: "#F3E8FF",
-  blueLight: "#EEF3FF",
-};
-
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#F5F7FB",
   },
 
   header: {
+    marginTop: 60,
+    marginHorizontal: 20,
+    marginBottom: 20,
+
     flexDirection: "row",
+    alignItems: "center",
     justifyContent: "space-between",
-    alignItems: "center",
-
-    paddingHorizontal: 20,
-    marginTop: 20,
-  },
-
-  logo: {
-    fontSize: 22,
-    fontWeight: "800",
-    color: colors.primary,
-  },
-
-  headerRight: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
   },
 
   headerTitle: {
-    fontSize: 16,
+    fontSize: 28,
     fontWeight: "700",
-    textAlign: "right",
-    color: colors.text,
-  },
-   headerSubtitle: {
-    fontSize: 18,
-    lineHeight: 28,
-    color: colors.gray,
-    marginHorizontal: 16,
-    marginTop: 8,
-  },
-  avatar: {
-    width: 45,
-    height: 45,
-    borderRadius: 30,
-  },
-
-  scoreContainer: {
-    alignItems: "center",
-    marginTop: 40,
-  },
-
-  circle: {
-    width: 190,
-    height: 190,
-    borderRadius: 100,
-
-    justifyContent: "center",
-    alignItems: "center",
-  },
-
-  innerCircle: {
-    width: 155,
-    height: 155,
-    borderRadius: 90,
-
-    backgroundColor: colors.background,
-
-    justifyContent: "center",
-    alignItems: "center",
-  },
-
-  score: {
-    fontSize: 56,
-    fontWeight: "900",
-    color: colors.text,
-  },
-
-  scoreLabel: {
-    marginTop: 4,
-
-    fontSize: 14,
-    letterSpacing: 3,
-
-    color: colors.gray,
-  },
-
-  title: {
-    textAlign: "center",
-
-    marginTop: 24,
-
-    fontSize: 34,
-    fontWeight: "900",
-
-    color: colors.text,
-  },
-
-  description: {
-    textAlign: "center",
-
-    marginHorizontal: 28,
-    marginTop: 16,
-
-    fontSize: 20,
-    lineHeight: 34,
-
-    color: colors.gray,
+    color: "#1E1E1E",
   },
 
   card: {
-    backgroundColor: colors.white,
-
-    marginHorizontal: 16,
-    marginTop: 24,
-
+    backgroundColor: "#FFFFFF",
+    marginHorizontal: 20,
+    marginBottom: 16,
+    padding: 20,
     borderRadius: 24,
 
-    padding: 22,
-
     shadowColor: "#000",
-    shadowOpacity: 0.08,
-    shadowRadius: 12,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
 
-    elevation: 4,
+    elevation: 3,
   },
 
-  cardHeader: {
+  /* Aluno */
+  studentRow: {
     flexDirection: "row",
     alignItems: "center",
-
-    marginBottom: 22,
   },
-  iconBox: {
-    width: 54,
-    height: 54,
 
-    borderRadius: 16,
-
-    justifyContent: "center",
-    alignItems: "center",
-
-    backgroundColor: colors.blueLight,
-
+  avatar: {
+    width: 58,
+    height: 58,
+    borderRadius: 29,
     marginRight: 14,
   },
 
-  cardTitle: {
-    fontSize: 24,
-    fontWeight: "800",
-
-    color: colors.text,
+  studentName: {
+    fontSize: 17,
+    fontWeight: "700",
+    color: "#1E1E1E",
   },
 
-  bulletContainer: {
-    flexDirection: "row",
-    alignItems: "flex-start",
+  studentDate: {
+    marginTop: 4,
+    fontSize: 13,
+    color: "#7A7A7A",
   },
 
-  bullet: {
-    width: 10,
-    height: 10,
-
-    borderRadius: 10,
-
-    backgroundColor: colors.primary,
-
-    marginTop: 10,
-    marginRight: 14,
-  },
-
-  bulletText: {
-    flex: 1,
-
-    fontSize: 20,
-    lineHeight: 34,
-
-    color: colors.gray,
-  },
-
-  quoteBox: {
-    backgroundColor: "#F5F5FA",
-
+  statusBadge: {
+    backgroundColor: "#E7F7EE",
+    paddingHorizontal: 12,
+    paddingVertical: 6,
     borderRadius: 20,
-
-    flexDirection: "row",
-
-    overflow: "hidden",
-
-    paddingVertical: 24,
   },
 
-  quoteBar: {
-    width: 6,
-
-    backgroundColor: "#3B43FF",
-
-    marginLeft: 14,
-    marginRight: 18,
-
-    borderRadius: 10,
+  statusText: {
+    color: "#2E9E5B",
+    fontSize: 12,
+    fontWeight: "700",
   },
 
-  quoteText: {
-    flex: 1,
-
-    fontSize: 22,
-    lineHeight: 38,
-
-    fontStyle: "italic",
-
-    color: colors.text,
-
-    paddingRight: 20,
-  },
-
-  button: {
-    marginTop: 24,
-    marginBottom: 140,
-
-    paddingVertical: 18,
-    borderRadius: 18,
-
-    alignItems: "center",
-    justifyContent: "center",
-  },
-
-  buttonText: {
-    color: colors.white,
-
+  /* Títulos */
+  cardTitle: {
     fontSize: 18,
-    fontWeight: "800",
+    fontWeight: "700",
+    color: "#1E1E1E",
+    marginBottom: 16,
   },
 
-  statsTitle: {
-    fontSize: 22,
-    fontWeight: "900",
-
-    marginBottom: 24,
-
-    color: "#666",
+  /* Documento */
+  documentContainer: {
+    flexDirection: "row",
+    alignItems: "center",
   },
 
-  statRow: {
+  documentName: {
+    fontSize: 15,
+    fontWeight: "600",
+    color: "#1E1E1E",
+  },
+
+  documentSize: {
+    marginTop: 4,
+    fontSize: 13,
+    color: "#7A7A7A",
+  },
+
+  link: {
+    color: "#6C4DFF",
+    fontWeight: "700",
+    fontSize: 14,
+  },
+
+  /* Nota */
+  gradeContainer: {
+    alignItems: "center",
+  },
+
+  gradeCircle: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+
+    backgroundColor: "#F3F0FF",
+
+    justifyContent: "center",
+    alignItems: "center",
+
+    marginBottom: 16,
+  },
+
+  gradeValue: {
+    fontSize: 40,
+    fontWeight: "bold",
+    color: "#6C4DFF",
+  },
+
+  gradeMax: {
+    fontSize: 16,
+    color: "#7A7A7A",
+  },
+
+  gradeMessage: {
+    fontSize: 15,
+    color: "#1E1E1E",
+    fontWeight: "600",
+  },
+
+  /* Feedback */
+  feedbackHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
-
-    marginBottom: 12,
+    alignItems: "center",
   },
 
-  statLabel: {
-    fontSize: 20,
-    color: "#444",
+  feedbackBox: {
+    marginTop: 8,
+    backgroundColor: "#F8F7FF",
+    borderRadius: 16,
+    padding: 16,
   },
 
-  statValue: {
-    fontSize: 22,
-    fontWeight: "800",
-
-    color: colors.text,
+  feedbackText: {
+    fontSize: 15,
+    color: "#4A4A4A",
+    lineHeight: 24,
   },
 
-  progressBar: {
-    width: "100%",
-    height: 12,
+  feedbackDate: {
+    marginTop: 14,
+    fontSize: 12,
+    color: "#8A8A8A",
+  },
 
-    backgroundColor: colors.lightGray,
+  /* Rubrica */
+  rubricHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 8,
+  },
 
-    borderRadius: 20,
+  rubricTitle: {
+    fontSize: 15,
+    fontWeight: "600",
+    color: "#1E1E1E",
+  },
 
+  rubricScore: {
+    fontSize: 15,
+    fontWeight: "700",
+    color: "#6C4DFF",
+  },
+
+  progressBackground: {
+    height: 8,
+    borderRadius: 999,
+    backgroundColor: "#ECECEC",
     overflow: "hidden",
   },
 
   progressFill: {
     height: "100%",
-
-    backgroundColor: colors.primary,
-
-    borderRadius: 20,
+    backgroundColor: "#6C4DFF",
+    borderRadius: 999,
   },
 
-  imageCard: {
-    marginHorizontal: 16,
-    marginTop: 24,
+  /* Botão */
+  editButton: {
+    marginHorizontal: 20,
+    marginTop: 10,
+    marginBottom: 30,
 
-    borderRadius: 24,
-
-    overflow: "hidden",
-
-    marginBottom: 24,
-  },
-
-  image: {
-    width: "100%",
-    height: 260,
-  },
-
-  overlay: {
-    position: "absolute",
-
-    bottom: 0,
-
-    width: "100%",
-
-    backgroundColor: "rgba(0,0,0,0.35)",
-
-    padding: 18,
-  },
-
-  overlayText: {
-    color: colors.white,
-
-    fontSize: 18,
-    fontWeight: "600",
-  },
-
-  tabBar: {
-    position: "absolute",
-
-    bottom: 0,
-    left: 0,
-    right: 0,
-  },
-
-  tabItem: {
-    alignItems: "center",
-  },
-
-  tabText: {
-    marginTop: 6,
-
-    color: "#9BA3B5",
-
-    fontSize: 12,
-    fontWeight: "600",
-  },
-
-  activeTab: {
-    paddingHorizontal: 28,
-    paddingVertical: 14,
-
+    height: 56,
     borderRadius: 18,
 
+    backgroundColor: "#6C4DFF",
+
+    justifyContent: "center",
     alignItems: "center",
+
+    shadowColor: "#6C4DFF",
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+
+    elevation: 5,
   },
 
-  activeTabText: {
-    color: colors.white,
-
-    marginTop: 4,
-
+  editButtonText: {
+    color: "#FFFFFF",
+    fontSize: 16,
     fontWeight: "700",
   },
-  confirmButton: {
-    marginTop: 24,
-    marginBottom: 140,
-    paddingVertical: 18,
-    borderRadius: 18,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  confirmButtonText: {
-    color: colors.white,
-    fontSize: 18,
-    fontWeight: "800",
-  },
- 
 });
-
-export const globalStyles = styles;

@@ -8,11 +8,54 @@ import {
 
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
+import { useEffect, useState } from "react";
 
 import { useLocalSearchParams, router } from "expo-router";
+import { useAuth } from "hooks/useAuth";
 
 export default function Task() {
-  const { task } = useLocalSearchParams();
+
+   const api = process.env.EXPO_PUBLIC_BASE_URL;
+    const { token } = useAuth()
+  
+    const [submissions, setSubmissions] = useState<any[]>([]);
+
+    const { task } = useLocalSearchParams();
+    
+     async function findSubmissions() {
+  try {
+    const response = await fetch(
+      `${api}submissions/task/${atividade.id}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(
+        data.message || "Erro ao buscar submissions"
+      );
+    }
+
+    setSubmissions(data);
+
+    console.log("Submissions:", data);
+  } catch (error: any) {
+    alert(error.message);
+  }
+}
+    
+      useEffect(() => {
+  findSubmissions();
+}, []);
+
+  
 
   const atividade = JSON.parse(
     task as string
@@ -96,7 +139,7 @@ export default function Task() {
       </View>
 
       <Text style={styles.statNumber}>
-        {atividade.submissions.length}
+        {submissions.length}
       </Text>
 
       <Text style={styles.statText}>
@@ -147,7 +190,7 @@ export default function Task() {
 
       <Text style={styles.statNumber}>
         {
-          atividade.submissions.filter(
+          submissions.filter(
             (s: any) => !s.aiGrade
           ).length
         }
@@ -173,7 +216,7 @@ export default function Task() {
         style={styles.progressPercent}
       >
         {Math.round(
-          (atividade.submissions.filter(
+          (submissions.filter(
             (s: any) => s.aiGrade
           ).length /
             Math.max(
@@ -195,7 +238,7 @@ export default function Task() {
           styles.progressFill,
           {
             width: `${Math.round(
-              (atividade.submissions.filter(
+              (submissions.filter(
                 (s: any) => s.aiGrade
               ).length /
                 Math.max(
@@ -215,7 +258,7 @@ export default function Task() {
       style={styles.progressLabel}
     >
       {
-        atividade.submissions.filter(
+        submissions.filter(
           (s: any) => s.aiGrade
         ).length
       }{" "}
@@ -225,10 +268,10 @@ export default function Task() {
 
   <Text style={styles.listTitle}>
     Submissões (
-    {atividade.submissions.length})
+    {submissions.length})
   </Text>
 
-  {atividade.submissions.map(
+  {submissions.map(
     (submission: any) => (
       <TouchableOpacity
         key={submission.id}
@@ -244,8 +287,7 @@ export default function Task() {
           <Text
             style={styles.studentName}
           >
-            Usuário #
-            {submission.userId}
+            {submission.user?.name}
           </Text>
 
           <Text
