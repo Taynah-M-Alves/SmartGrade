@@ -14,6 +14,7 @@ import { Ionicons, AntDesign, Feather } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useState } from "react";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import { router } from "expo-router";
 import { useAuth } from "hooks/useAuth";
 
 type Criterio = {
@@ -186,9 +187,22 @@ export default function CriarAtividade() {
           <Text style={styles.doneCodeLabel}>Código da atividade</Text>
           <Text style={styles.doneCode}>{taskCriada?.code}</Text>
         </View>
-        <TouchableOpacity style={styles.button} onPress={handleReset}>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => {
+            handleReset();
+          }}
+        >
           <AntDesign name="plus" size={18} color="#FFF" />
           <Text style={styles.buttonText}>Criar outra atividade</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[styles.button, { backgroundColor: "#2D3436", marginTop: 12 }]}
+          onPress={() => router.replace("/(protected)/professor/(tabs)")}
+        >
+          <Ionicons name="home-outline" size={18} color="#FFF" />
+          <Text style={styles.buttonText}>Ver minhas atividades</Text>
         </TouchableOpacity>
       </View>
     );

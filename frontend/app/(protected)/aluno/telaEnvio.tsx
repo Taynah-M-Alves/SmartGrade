@@ -1,38 +1,43 @@
 import React, { useState } from 'react';
-import { ScrollView, Text, View, StyleSheet, TouchableOpacity } from 'react-native';
-import { useLocalSearchParams } from 'expo-router';
+import { ScrollView, Text, View, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { useLocalSearchParams, router } from 'expo-router';
 import * as DocumentPicker from 'expo-document-picker';
-// Se tiver erro na linha do colors abaixo, ajuste o caminho para a sua pasta styles
-// import { colors } from '../../../../../styles/colors'; 
+import { useAuth } from 'hooks/useAuth';
 
 export default function SubmitScreen() {
-  // 1. Recebendo os dados dinâmicos da Home (usa valores padrão se não vier nada)
   const params = useLocalSearchParams();
-  const titulo = params.titulo || "Entrega documentação";
-  const disciplina = params.disciplina || "Projeto Integrador";
-  const professor = params.professor || "João Silva";
-  const dataEntrega = params.dataEntrega || "26/06/2026 às 23:59";
-  const valor = params.valor || "8,5 pontos";
-  const descricao = params.descricao || "Nesta atividade, você deve entregar toda a documentação solicitada. Certifique-se de seguir o modelo disponibilizado.";
+  const api = process.env.EXPO_PUBLIC_BASE_URL;
+  const { token, user } = useAuth();
 
-  // 2. Controlando o estado do arquivo e do envio
+  const atividade = params.atividade
+    ? JSON.parse(params.atividade as string)
+    : null;
+
+  const titulo = atividade?.title || "Entrega documentação";
+  const disciplina = atividade?.createdBy?.name
+    ? `Professor: ${atividade.createdBy.name}`
+    : "Projeto Integrador";
+  const dataEntrega = atividade?.deadline
+    ? new Date(atividade.deadline).toLocaleString("pt-BR")
+    : "26/06/2026 às 23:59";
+  const descricao = atividade?.description || "Nesta atividade, você deve entregar toda a documentação solicitada. Certifique-se de seguir o modelo disponibilizado.";
+
   const [arquivoSelecionado, setArquivoSelecionado] = useState<{ nome: string, uri: string } | null>(null);
   const [atividadeEnviada, setAtividadeEnviada] = useState(false);
+  const [enviando, setEnviando] = useState(false);
 
-  // 3. Função REAL para abrir os arquivos do celular
   const selecionarArquivo = async () => {
     try {
       const resultado = await DocumentPicker.getDocumentAsync({
-        type: ['application/pdf', 'image/*'], // Permite PDFs e Imagens
+        type: 'application/pdf',
         copyToCacheDirectory: true,
       });
 
-      // Se o usuário escolher um arquivo com sucesso
       if (!resultado.canceled && resultado.assets.length > 0) {
         const arquivo = resultado.assets[0];
-        setArquivoSelecionado({ 
+        setArquivoSelecionado({
           nome: arquivo.name,
-          uri: arquivo.uri 
+          uri: arquivo.uri
         });
       }
     } catch (error) {
@@ -40,17 +45,55 @@ export default function SubmitScreen() {
     }
   };
 
-  // 4. Função para enviar a atividade
-  const enviarAtividade = () => {
-    if (arquivoSelecionado) {
+  const enviarAtividade = async () => {
+    if (!arquivoSelecionado || !atividade?.id || !user?.id) {
+      return;
+    }
+
+    setEnviando(true);
+
+    try {
+      const formData = new FormData();
+
+      formData.append('file', {
+        uri: arquivoSelecionado.uri,
+        name: arquivoSelecionado.nome,
+        type: 'application/pdf',
+      } as any);
+
+      formData.append('taskId', String(atividade.id));
+      formData.append('userId', String(user.id));
+
+      const response = await fetch(`${api}submissions/upload`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Erro ao enviar atividade');
+      }
+
       setAtividadeEnviada(true);
-      // No futuro, a chamada para o back-end (API) entra aqui
+
+      router.push({
+        pathname: "/(protected)/aluno/feedback",
+        params: { id: String(data.id) },
+      });
+    } catch (error: any) {
+      alert(error.message);
+    } finally {
+      setEnviando(false);
     }
   };
 
   return (
     <ScrollView style={styles.container}>
-      
+
       {/* CABEÇALHO AZUL */}
       <View style={styles.headerCard}>
         <View style={styles.headerInfo}>
@@ -71,25 +114,20 @@ export default function SubmitScreen() {
       <View style={styles.card}>
         <Text style={styles.sectionTitle}>Sobre a atividade</Text>
         <Text style={styles.descriptionText}>{descricao}</Text>
-        
+
         <View style={styles.infoRow}>
-          <Text style={styles.infoLabel}>Disciplina</Text>
-          <Text style={styles.infoValue}>{disciplina}</Text>
+          <Text style={styles.infoLabel}>Código</Text>
+          <Text style={styles.infoValue}>{atividade?.code ?? '-'}</Text>
         </View>
 
         <View style={styles.infoRow}>
           <Text style={styles.infoLabel}>Professor</Text>
-          <Text style={styles.infoValue}>{professor}</Text>
+          <Text style={styles.infoValue}>{atividade?.createdBy?.name ?? '-'}</Text>
         </View>
 
         <View style={styles.infoRow}>
           <Text style={styles.infoLabel}>Data de entrega</Text>
           <Text style={styles.infoValue}>{dataEntrega}</Text>
-        </View>
-
-        <View style={styles.infoRow}>
-          <Text style={styles.infoLabel}>Valor da atividade</Text>
-          <Text style={styles.infoValue}>{valor}</Text>
         </View>
 
         {/* ÁREA DE DOWNLOAD (Aparece após o envio) */}
@@ -107,7 +145,7 @@ export default function SubmitScreen() {
       {!atividadeEnviada && (
         <View style={styles.card}>
           <Text style={styles.sectionTitle}>Enviar arquivo</Text>
-          
+
           <TouchableOpacity style={styles.uploadBox} onPress={selecionarArquivo}>
             <Text style={styles.uploadTextTitle}>
               {arquivoSelecionado ? "Arquivo Selecionado:" : "Toque aqui para escolher o arquivo"}
@@ -120,17 +158,21 @@ export default function SubmitScreen() {
                 <View style={styles.uploadFakeButton}>
                   <Text style={styles.uploadFakeButtonText}>Procurar no celular</Text>
                 </View>
-                <Text style={styles.uploadHint}>PDF ou Imagens (máx. 20MB)</Text>
+                <Text style={styles.uploadHint}>Apenas PDF</Text>
               </>
             )}
           </TouchableOpacity>
 
-          <TouchableOpacity 
-            style={[styles.submitButton, !arquivoSelecionado && styles.submitButtonDisabled]} 
-            disabled={!arquivoSelecionado}
+          <TouchableOpacity
+            style={[styles.submitButton, (!arquivoSelecionado || enviando) && styles.submitButtonDisabled]}
+            disabled={!arquivoSelecionado || enviando}
             onPress={enviarAtividade}
           >
-            <Text style={styles.submitButtonText}>Enviar atividade</Text>
+            {enviando ? (
+              <ActivityIndicator color="#FFF" />
+            ) : (
+              <Text style={styles.submitButtonText}>Enviar atividade</Text>
+            )}
           </TouchableOpacity>
         </View>
       )}

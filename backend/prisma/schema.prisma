@@ -43,6 +43,7 @@ model TaskCriteria {
   taskId      Int
   User        User     @relation(fields: [createdById], references: [id])
   task        Task     @relation(fields: [taskId], references: [id])
+  feedback    SubmissionCriterionFeedback[]
 }
 
 model TaskSubmission {
@@ -51,12 +52,27 @@ model TaskSubmission {
   createdAt                             DateTime @default(now())
   aiFeedback                            String?
   aiGrade                               Float?
+  professorGrade                       Float?
+  professorFeedback                    String?
+  status                                SubmissionStatus? @default(PENDENTE)
   createdById                           Int
   userId                                Int
   taskId                                Int
   User_TaskSubmission_createdByIdToUser User     @relation("TaskSubmission_createdByIdToUser", fields: [createdById], references: [id])
   task                                  Task     @relation(fields: [taskId], references: [id])
   user                                  User     @relation(fields: [userId], references: [id])
+  criteriaFeedback                      SubmissionCriterionFeedback[]
+}
+
+model SubmissionCriterionFeedback {
+  id           Int            @id @default(autoincrement())
+  score        Float
+  comment      String
+  createdAt    DateTime       @default(now())
+  submissionId Int
+  criterionId  Int
+  submission   TaskSubmission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  criterion    TaskCriteria   @relation(fields: [criterionId], references: [id])
 }
 
 model ParameterSubmission {
@@ -72,4 +88,11 @@ model ParameterSubmission {
 enum Role {
   PROFESSOR
   ALUNO
+}
+
+enum SubmissionStatus {
+  PENDENTE
+  FINALIZADO
+
+  @@map("activity_status")
 }

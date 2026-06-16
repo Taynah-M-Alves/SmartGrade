@@ -4,491 +4,321 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  FlatList
+  ActivityIndicator,
 } from "react-native";
 
-import {
-  Feather,
-  MaterialIcons,
-  Ionicons,
-  FontAwesome5,
-  Entypo,
-  AntDesign,
-} from "@expo/vector-icons";
-import { router } from "expo-router";
-
-import { useState, useEffect } from "react";
-
-import PageContainer from "components/PageContainer";
+import { Ionicons, Feather } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
+import { router, useFocusEffect } from "expo-router";
+import { useState, useCallback } from "react";
 import { useAuth } from "hooks/useAuth";
 
 export default function ProfessorHome() {
   const api = process.env.EXPO_PUBLIC_BASE_URL;
-  const { user, token } = useAuth()
+  const { user, token } = useAuth();
 
-  const [atividades, setAtividades] = useState([]);
-  
-    async function findAtividades() {
-      try {
-        const response = await fetch(`${api}tasks`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
-  
-        const data = await response.json();
-  
-        if (!response.ok) {
-          throw new Error(
-            data.message || "Erro ao buscar atividades"
-          );
-        }
-  
-        const minhasAtividades = data.filter(
-        (atividade: any) => Number(atividade.createdById) === Number(user?.id)
-      );
-  
-      setAtividades(minhasAtividades);
-  
-        console.log("data",data);
+  const [atividades, setAtividades] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-        console.log("teste",
-  JSON.stringify(
-    data[1].submissions,
-    null,
-    2
-  )
-);
-
-      console.log("submis",data.submissions)
-  
-        console.log("atividades", atividades)
-      } catch (error: any) {
-        alert(error.message);
-      }
+  async function findAtividades() {
+    try {
+      setLoading(true);
+      const response = await fetch(`${api}tasks`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message);
+      setAtividades(data.filter((a: any) => Number(a.createdById) === Number(user?.id)));
+    } catch (error: any) {
+      console.error(error.message);
+    } finally {
+      setLoading(false);
     }
-  
-    useEffect(() => {
-    if (token && user?.id) {
-      findAtividades();
+  }
 
-      console.log("atividadesEffect", atividades)
-    }
-  }, [token, user]);
+  useFocusEffect(
+    useCallback(() => {
+      if (token && user?.id) findAtividades();
+    }, [token, user?.id])
+  );
+
+  const totalSubmissoes = atividades.reduce((acc, a) => acc + (a.submissions?.length ?? 0), 0);
+  const feedbacksGerados = atividades.reduce(
+    (acc, a) => acc + (a.submissions?.filter((s: any) => s.aiGrade != null).length ?? 0),
+    0
+  );
+
   return (
     <View style={styles.container}>
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 120 }}
-      >
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 100 }}>
 
-        {/* WELCOME */}
-        <View style={styles.welcomeContainer}>
-          <Text style={styles.welcomeText}>BEM-VINDO(A) DE VOLTA</Text>
+        {/* HEADER GRADIENT */}
+        <LinearGradient colors={["#7C6CF7", "#5A4AF4"]} style={styles.headerGradient}>
+          <View style={styles.headerTop}>
+            <View>
+              <Text style={styles.welcomeLabel}>BEM-VINDO(A) DE VOLTA 👋</Text>
+              <Text style={styles.headerName}>{user?.name?.split(" ")[0]}</Text>
+            </View>
+            <View style={styles.avatarCircle}>
+              <Text style={styles.avatarLetter}>
+                {user?.name?.charAt(0).toUpperCase()}
+              </Text>
+            </View>
+          </View>
 
-          <Text style={styles.title}>
-            Olá Professor(a) {user?.name}
-          </Text>
-        </View>
+          {/* STATS INLINE */}
+          <View style={styles.statsRow}>
+            <View style={styles.statBox}>
+              <Text style={styles.statNumber}>{atividades.length}</Text>
+              <Text style={styles.statLabel}>Atividades</Text>
+            </View>
+            <View style={styles.statDivider} />
+            <View style={styles.statBox}>
+              <Text style={styles.statNumber}>{totalSubmissoes}</Text>
+              <Text style={styles.statLabel}>Entregas</Text>
+            </View>
+            <View style={styles.statDivider} />
+            <View style={styles.statBox}>
+              <Text style={styles.statNumber}>{feedbacksGerados}</Text>
+              <Text style={styles.statLabel}>IA Feedbacks</Text>
+            </View>
+          </View>
+        </LinearGradient>
 
-        {/* BUTTON */}
-        <TouchableOpacity style={styles.createButton} onPress={() => router.push('(protected)/professor/(tabs)/CriarAtividade')}>
-          <AntDesign name="plus" size={24} color="#fff" />
-
+        {/* QUICK ACTION */}
+        <TouchableOpacity
+          style={styles.createButton}
+          activeOpacity={0.85}
+          onPress={() => router.push("(protected)/professor/(tabs)/criarAtividade")}
+        >
+          <View style={styles.createButtonIcon}>
+            <Ionicons name="add" size={22} color="#6C5CE7" />
+          </View>
           <Text style={styles.createButtonText}>Nova Atividade</Text>
+          <Ionicons name="chevron-forward" size={18} color="#6C5CE7" />
         </TouchableOpacity>
 
-        {/* CARDS */}
-        <View style={styles.card}>
-          <View style={styles.cardTop}>
-
-            <View style={styles.indiceCard}>
-               <MaterialIcons
-                  name="assignment-add"
-                  size={50}
-                  color="#3457B1"
-                />
-            <Text style={styles.cardNumber}>{atividades.length}</Text>
-            </View>
-           
-          </View>
-          <Text style={styles.cardLabel}>Trabalhos criados</Text>
-        </View>
-
-        <View style={styles.card}>
-          <View style={styles.cardTop}>
-           <View style={styles.indiceCard}>
-              <AntDesign name="star" size={50} color="#B13BB5" />
-
-              <Text style={styles.cardNumber}>{atividades.length}</Text>
-</View></View>
-          <Text style={styles.cardLabel}>
-            Feedbacks gerados
-          </Text>
-        </View>
-
-        {/* SECTION TITLE */}
+        {/* LIST */}
         <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>
-            Minhas Atividades
-          </Text>
-
-          <TouchableOpacity>
-            <Text style={styles.viewAll}>Ver todos</Text>
-          </TouchableOpacity>
+          <Text style={styles.sectionTitle}>Minhas Atividades</Text>
+          <Text style={styles.sectionCount}>{atividades.length}</Text>
         </View>
 
-       
-
-        {atividades.length > 0 ? (
-        atividades.map((item: any) => (
-    <TouchableOpacity
-  key={item.id}
-  style={styles.workCard}
-  activeOpacity={0.8}
-  onPress={() =>
-    router.push({
-      pathname: "/(protected)/professor/Task",
-      params: {
-        task: JSON.stringify(item),
-      },
-    })
-  }
->
-      <View style={styles.workIcon}>
-        <Feather
-          name="file-text"
-          size={24}
-          color="#4C6FFF"
-        />
-      </View>
-
-      <View style={styles.workContent}>
-        <Text style={styles.workTitle}>
-          {item.title}
-        </Text>
-
-        <Text style={styles.workSubtitle}>
-          {item.description}
-        </Text>
-
-        <View style={styles.workFooter}>
-          <View>
-            <Text style={styles.deliveryNumber}>
-              {item.code}
-            </Text>
-
-            <Text style={styles.deliveryText}>
-              CÓDIGO
-            </Text>
+        {loading ? (
+          <ActivityIndicator size="large" color="#6C5CE7" style={{ marginTop: 40 }} />
+        ) : atividades.length === 0 ? (
+          <View style={styles.emptyContainer}>
+            <Ionicons name="document-outline" size={56} color="#D1C8FF" />
+            <Text style={styles.emptyTitle}>Nenhuma atividade ainda</Text>
+            <Text style={styles.emptySubtitle}>Crie sua primeira atividade no botão acima</Text>
           </View>
+        ) : (
+          atividades.map((item: any) => {
+            const subCount = item.submissions?.length ?? 0;
+            const avaliadas = item.submissions?.filter((s: any) => s.aiGrade != null).length ?? 0;
+            const isDeadlinePast = new Date(item.deadline) < new Date();
 
-          <View style={styles.status}>
-            <Text style={styles.statusText}>
-              {new Date(item.deadline).toLocaleDateString(
-                "pt-BR"
-              )}
-            </Text>
-          </View>
-        </View>
-      </View>
-    </TouchableOpacity>
-  ))
-) : (
-  <View
-    style={{
-      marginTop: 30,
-      alignItems: "center",
-      justifyContent: "center",
-    }}
-  >
-    <MaterialIcons
-      name="assignment"
-      size={60}
-      color="#C7CDD8"
-    />
+            return (
+              <TouchableOpacity
+                key={item.id}
+                style={styles.activityCard}
+                activeOpacity={0.8}
+                onPress={() =>
+                  router.push({ pathname: "/(protected)/professor/telaTask", params: { task: JSON.stringify(item) } })
+                }
+              >
+                <View style={styles.cardIconBox}>
+                  <Feather name="file-text" size={20} color="#6C5CE7" />
+                </View>
 
-    <Text
-      style={{
-        marginTop: 12,
-        fontSize: 16,
-        color: "#666",
-        textAlign: "center",
-      }}
-    >
-      Você ainda não criou nenhuma atividade.
-    </Text>
-  </View>
-)}
+                <View style={styles.cardContent}>
+                  <Text style={styles.cardTitle} numberOfLines={1}>{item.title}</Text>
+                  <Text style={styles.cardSubtitle} numberOfLines={1}>{item.description}</Text>
+
+                  <View style={styles.cardFooter}>
+                    <View style={styles.codeChip}>
+                      <Text style={styles.codeText}>{item.code}</Text>
+                    </View>
+
+                    <View style={[styles.deadlineChip, isDeadlinePast && styles.deadlineChipPast]}>
+                      <Ionicons
+                        name="calendar-outline"
+                        size={11}
+                        color={isDeadlinePast ? "#FF5F5F" : "#6C5CE7"}
+                      />
+                      <Text style={[styles.deadlineText, isDeadlinePast && styles.deadlineTextPast]}>
+                        {new Date(item.deadline).toLocaleDateString("pt-BR")}
+                      </Text>
+                    </View>
+                  </View>
+                </View>
+
+                <View style={styles.cardRight}>
+                  {subCount > 0 && (
+                    <>
+                      <Text style={styles.subCount}>{subCount}</Text>
+                      <Text style={styles.subLabel}>entrega{subCount > 1 ? "s" : ""}</Text>
+                      {avaliadas > 0 && (
+                        <View style={styles.aiChip}>
+                          <Text style={styles.aiChipText}>{avaliadas} IA</Text>
+                        </View>
+                      )}
+                    </>
+                  )}
+                  <Ionicons name="chevron-forward" size={16} color="#C5C0E8" style={{ marginTop: 4 }} />
+                </View>
+              </TouchableOpacity>
+            );
+          })
+        )}
       </ScrollView>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    marginTop: 50
-  },
+  container: { flex: 1, backgroundColor: "#F5F6FA" },
 
-  header: {
-    backgroundColor: "#F5F5F5",
-    paddingHorizontal: 24,
-    paddingTop: 55,
-    paddingBottom: 20,
+  headerGradient: {
+    paddingTop: 56,
+    paddingHorizontal: 22,
+    paddingBottom: 28,
+    borderBottomLeftRadius: 28,
+    borderBottomRightRadius: 28,
+  },
+  headerTop: {
     flexDirection: "row",
-    alignItems: "center",
     justifyContent: "space-between",
+    alignItems: "flex-start",
+    marginBottom: 24,
   },
-
-  logo: {
-    fontSize: 22,
-    fontWeight: "700",
-    color: "#3457B1",
-  },
-
-  avatar: {
-    width: 46,
-    height: 46,
-    borderRadius: 23,
-    backgroundColor: "#F28C63",
-    alignItems: "center",
+  welcomeLabel: { color: "rgba(255,255,255,0.75)", fontSize: 12, fontWeight: "600", letterSpacing: 1 },
+  headerName: { color: "#FFF", fontSize: 30, fontWeight: "800", marginTop: 4 },
+  avatarCircle: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: "rgba(255,255,255,0.25)",
     justifyContent: "center",
-    borderWidth: 2,
-    borderColor: "#7F8CFF",
+    alignItems: "center",
   },
+  avatarLetter: { color: "#FFF", fontSize: 20, fontWeight: "700" },
 
-  deleteButton: {
-  width: 45,
-  height: 45,
-  borderRadius: 12,
-  backgroundColor: "#EF4444",
-  justifyContent: "center",
-  alignItems: "center",
-  marginLeft: 10,
-},
-
-  welcomeContainer: {
-    paddingHorizontal: 25,
-    marginTop: 35,
+  statsRow: {
+    flexDirection: "row",
+    backgroundColor: "rgba(255,255,255,0.15)",
+    borderRadius: 18,
+    paddingVertical: 16,
+    paddingHorizontal: 8,
   },
-
-  welcomeText: {
-    color: "#B63CC8",
-    fontWeight: "700",
-    fontSize: 14,
-    marginBottom: 12,
-  },
-
-  title: {
-    fontSize: 26,
-    fontWeight: "800",
-    color: "#1D2433",
-  },
+  statBox: { flex: 1, alignItems: "center" },
+  statDivider: { width: 1, backgroundColor: "rgba(255,255,255,0.2)" },
+  statNumber: { color: "#FFF", fontSize: 26, fontWeight: "800" },
+  statLabel: { color: "rgba(255,255,255,0.75)", fontSize: 12, marginTop: 2 },
 
   createButton: {
-    marginHorizontal: 20,
-    marginTop: 25,
-    height: 70,
-    borderRadius: 18,
     flexDirection: "row",
     alignItems: "center",
+    backgroundColor: "#FFF",
+    marginHorizontal: 20,
+    marginTop: 20,
+    borderRadius: 16,
+    padding: 16,
+    shadowColor: "#6C5CE7",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 12,
+    elevation: 4,
+  },
+  createButtonIcon: {
+    width: 36,
+    height: 36,
+    borderRadius: 10,
+    backgroundColor: "#EDE9FF",
     justifyContent: "center",
-    gap: 10,
-    backgroundColor: "#6B5FD6",
-  },
-
-  createButtonText: {
-    color: "#fff",
-    fontSize: 24,
-    fontWeight: "700",
-  },
-
-  card: {
-    display: 'flex',
-    backgroundColor: "#F6F6F6",
-    marginHorizontal: 20,
-    marginTop: 22,
-    borderRadius: 18,
-    padding: 24,
-  },
-
-  cardTop: {
-    display: 'flex',
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-
-  indiceCard:{
-    height: 'auto',
-    display: 'flex',
-    flexDirection: 'row',
-    gap: 10,
-    alignContent: 'center',
-    justifyContent: 'center'
-  },
-
-  urgentBadge: {
-    backgroundColor: "#FF6B6B",
-    paddingHorizontal: 16,
-    paddingVertical: 6,
-    borderRadius: 20,
-  },
-
-  badgeText: {
-    color: "#621111",
-    fontWeight: "700",
-    fontSize: 12,
-  },
-
-  cardNumber: {
-    fontSize: 40,
-    fontWeight: "800",
-    color: "#303844",
-    marginTop: 0,
-  },
-
-  cardLabel: {
-    color: "#5D6570",
-    fontSize: 18,
-    marginTop: 4,
-  },
-
-  averageRow: {
-    flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    marginRight: 12,
   },
-
-  upText: {
-    color: "#3457B1",
-    fontWeight: "700",
-    fontSize: 18,
-  },
-
-  progressBackground: {
-    height: 8,
-    backgroundColor: "#D6DCE5",
-    borderRadius: 10,
-    marginVertical: 16,
-  },
-
-  progressFill: {
-    width: "84%",
-    height: 8,
-    borderRadius: 10,
-    backgroundColor: "#6B5FD6",
-  },
+  createButtonText: { flex: 1, color: "#1D2433", fontWeight: "700", fontSize: 15 },
 
   sectionHeader: {
-    marginTop: 40,
+    flexDirection: "row",
+    alignItems: "center",
     marginHorizontal: 22,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    marginTop: 28,
+    marginBottom: 14,
   },
-
-  sectionTitle: {
-    fontSize: 22,
-    fontWeight: "800",
-    color: "#1D2433",
-  },
-
-  viewAll: {
-    color: "#3457B1",
+  sectionTitle: { flex: 1, fontSize: 18, fontWeight: "800", color: "#1D2433" },
+  sectionCount: {
+    backgroundColor: "#EDE9FF",
+    color: "#6C5CE7",
+    fontSize: 13,
     fontWeight: "700",
-  },
-
-  workCard: {
-    backgroundColor: "#F6F6F6",
-    marginHorizontal: 20,
-    marginTop: 18,
-    borderRadius: 18,
-    padding: 18,
-    flexDirection: "row",
-    alignItems: "center",
-  },
-
-  workIcon: {
-    width: 48,
-    height: 58,
-    borderRadius: 12,
-    backgroundColor: "#E5EBFF",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-
-  workContent: {
-    flex: 1,
-    marginLeft: 14,
-  },
-
-  workTitle: {
-    fontSize: 16,
-    fontWeight: "700",
-    color: "#303844",
-  },
-
-  workSubtitle: {
-    color: "#666",
-    marginTop: 4,
-    fontSize: 14,
-  },
-
-  workFooter: {
-    marginTop: 12,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-
-  deliveryNumber: {
-    fontSize: 18,
-    fontWeight: "800",
-    color: "#303844",
-  },
-
-  deliveryText: {
-    fontSize: 11,
-    color: "#666",
-  },
-
-  status: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#DCE2E8",
-    paddingHorizontal: 14,
-    paddingVertical: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 3,
     borderRadius: 20,
   },
 
-  dot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    marginRight: 8,
+  activityCard: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#FFF",
+    marginHorizontal: 20,
+    marginBottom: 12,
+    borderRadius: 18,
+    padding: 14,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
   },
+  cardIconBox: {
+    width: 44,
+    height: 44,
+    borderRadius: 13,
+    backgroundColor: "#EDE9FF",
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 12,
+  },
+  cardContent: { flex: 1 },
+  cardTitle: { fontSize: 15, fontWeight: "700", color: "#1D2433" },
+  cardSubtitle: { fontSize: 13, color: "#8E96A8", marginTop: 2 },
+  cardFooter: { flexDirection: "row", gap: 8, marginTop: 10, alignItems: "center" },
+  codeChip: {
+    backgroundColor: "#F0EEFF",
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 6,
+  },
+  codeText: { color: "#6C5CE7", fontSize: 11, fontWeight: "700", letterSpacing: 0.5 },
+  deadlineChip: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 3,
+    backgroundColor: "#F0EEFF",
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 6,
+  },
+  deadlineChipPast: { backgroundColor: "#FFF0F0" },
+  deadlineText: { color: "#6C5CE7", fontSize: 11, fontWeight: "600" },
+  deadlineTextPast: { color: "#FF5F5F" },
 
-  statusText: {
-    fontWeight: "600",
-    color: "#39424E",
+  cardRight: { alignItems: "center", marginLeft: 8 },
+  subCount: { fontSize: 22, fontWeight: "800", color: "#1D2433" },
+  subLabel: { fontSize: 10, color: "#8E96A8" },
+  aiChip: {
+    backgroundColor: "#EDE9FF",
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 6,
+    marginTop: 4,
   },
+  aiChipText: { color: "#6C5CE7", fontSize: 10, fontWeight: "700" },
 
-  description: {
-    color: "#4B5563",
-    marginBottom: 10,
-  },
-
-  info: {
-    color: "#6B7280",
-    marginBottom: 4,
-  },
-
-  professor: {
-    marginTop: 8,
-    fontWeight: "600",
-    color: "#111827",
-  },
+  emptyContainer: { alignItems: "center", marginTop: 48, paddingHorizontal: 40 },
+  emptyTitle: { fontSize: 17, fontWeight: "700", color: "#1D2433", marginTop: 16 },
+  emptySubtitle: { fontSize: 14, color: "#8E96A8", textAlign: "center", marginTop: 6 },
 });

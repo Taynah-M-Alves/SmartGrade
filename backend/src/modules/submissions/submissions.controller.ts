@@ -5,43 +5,40 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  Patch,
   UploadedFile,
   UseInterceptors,
+  UseGuards,
   BadRequestException,
   Req,
 } from '@nestjs/common';
 
 import { FileInterceptor } from '@nestjs/platform-express';
 
-import { diskStorage } from 'multer';
-
-import { extname } from 'path';
+import { memoryStorage } from 'multer';
 
 import { SubmissionsService } from './submissions.service';
 
 import { CreateSubmissionDto } from './dto/create-submission.dto';
+import { UpdateGradeDto } from './dto/update-grade.dto';
+
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { Role } from '@prisma/client';
 
 @Controller('submissions')
+@UseGuards(JwtAuthGuard)
 export class SubmissionsController {
   constructor(
     private readonly submissionsService: SubmissionsService,
   ) { }
 
-  
+
   @Post('/upload')
   @UseInterceptors(
     FileInterceptor('file', {
-      storage: diskStorage({
-        destination: './uploads',
-
-        filename: (req, file, callback) => {
-          const uniqueName = `${Date.now()}${extname(
-            file.originalname,
-          )}`;
-
-          callback(null, uniqueName);
-        },
-      }),
+      storage: memoryStorage(),
 
       fileFilter: (req, file, callback) => {
         if (
@@ -74,7 +71,8 @@ export class SubmissionsController {
     }
 
     return await this.submissionsService.create(
-      file.path,
+      file.buffer,
+      file.originalname,
 
       Number(createSubmissionDto.taskId),
 
@@ -87,6 +85,11 @@ export class SubmissionsController {
   @Get()
   async findAll() {
     return await this.submissionsService.findAll();
+  }
+
+  @Get('/my')
+  async findMine(@Req() req) {
+    return await this.submissionsService.findMine(req.user.id);
   }
 
   @Get('/task/:taskId')
@@ -109,6 +112,14 @@ export class SubmissionsController {
     );
   }
 
+  @Get('/:id')
+  async findOne(
+    @Param('id', ParseIntPipe)
+    id: number,
+  ) {
+    return await this.submissionsService.findOne(id);
+  }
+
   @Post('/evaluate/:id')
   async evaluateSubmission(
     @Param('id', ParseIntPipe)
@@ -116,6 +127,22 @@ export class SubmissionsController {
   ) {
     return await this.submissionsService.evaluateSubmission(
       id,
+    );
+  }
+
+  @UseGuards(RolesGuard)
+  @Roles(Role.PROFESSOR)
+  @Patch('/:id/grade')
+  async updateGrade(
+    @Param('id', ParseIntPipe)
+    id: number,
+
+    @Body() updateGradeDto: UpdateGradeDto,
+  ) {
+    return await this.submissionsService.updateGrade(
+      id,
+      updateGradeDto.grade,
+      updateGradeDto.feedback,
     );
   }
 }

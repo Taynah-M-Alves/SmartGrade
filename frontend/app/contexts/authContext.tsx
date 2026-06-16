@@ -82,7 +82,7 @@ export default function AuthProvider({children} : PropsWithChildren){
             token: null,
             userId: null,
             user: null})
-        router.replace("/screens/TelaInicial")
+        router.replace("/screens/telaInicial")
         console.log('USUARIO DESLOGADO! Usuario', user)
     }
 

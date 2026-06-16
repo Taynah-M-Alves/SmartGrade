@@ -17,8 +17,8 @@ export const styles = StyleSheet.create({
   },
 
   headerTitle: {
-    fontSize: 28,
-    fontWeight: "700",
+    fontSize: 26,
+    fontWeight: "800",
     color: "#1E1E1E",
   },
 

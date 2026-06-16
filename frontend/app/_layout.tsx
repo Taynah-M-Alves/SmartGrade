@@ -19,17 +19,17 @@ export default function Layout() {
         />
 
         <Stack.Screen
-          name="screens/TelaInicial/index"
+          name="screens/telaInicial"
           options={{ title: "Home Inicial" }}
         />
 
         <Stack.Screen
-          name="auth/Login/index"
+          name="auth/login"
           options={{ title: "Entrar" }}
         />
 
         <Stack.Screen
-          name="auth/Cadastro/index"
+          name="auth/cadastro/index"
           options={{ title: "Cadastrar" }}
         />
 
