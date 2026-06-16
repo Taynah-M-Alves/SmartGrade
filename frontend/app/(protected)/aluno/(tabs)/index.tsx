@@ -108,7 +108,7 @@ export default function HomeAluno() {
             <View style={styles.statDivider} />
             <View style={styles.statBox}>
               <Text style={styles.statNumber}>{gamification?.xp ?? 0}</Text>
-              <Text style={styles.statLabel}>XP ⚡</Text>
+              <Text style={styles.statLabel}>XP </Text>
             </View>
           </View>
 

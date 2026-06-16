@@ -66,7 +66,6 @@ export default function AuthProvider({children} : PropsWithChildren){
             router.replace("/(protected)/aluno/(tabs)");
         }
 
-        console.log('USUARIO LOGADO!, USUARIO', user)
     }
 
     function signOut() {
@@ -83,7 +82,6 @@ export default function AuthProvider({children} : PropsWithChildren){
             userId: null,
             user: null})
         router.replace("/screens/telaInicial")
-        console.log('USUARIO DESLOGADO! Usuario', user)
     }
 
     useEffect(() => {
@@ -96,13 +94,11 @@ export default function AuthProvider({children} : PropsWithChildren){
 
                 setRoleUser(role);
 
-                console.log("roleUser --->", role);
 
                 setToken(state?.token ?? null);
                 setUserId(state?.userId ?? null);
                 setUser(state?.user ?? null);
                 setIsLoggedIn(state?.isLoggedIn ?? false);
-                console.log("STORAGE --> ",state)
 
 
             }catch(error){
