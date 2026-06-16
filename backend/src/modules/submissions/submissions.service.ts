@@ -17,6 +17,9 @@ const submissionInclude = {
   task: {
     include: {
       criteria: true,
+      createdBy: {
+        select: { id: true, name: true, email: true, role: true },
+      },
     },
   },
 
