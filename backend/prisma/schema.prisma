@@ -8,15 +8,36 @@ datasource db {
 }
 
 model User {
-  id                                              Int              @id @default(autoincrement())
+  id                                              Int               @id @default(autoincrement())
   name                                            String
-  email                                           String           @unique
+  email                                           String            @unique
   password                                        String
   role                                            Role
-  tasks                                           Task[]           @relation("UserTasks")
+  xp                                              Int               @default(0)
+  tasks                                           Task[]            @relation("UserTasks")
   TaskCriteria                                    TaskCriteria[]
-  TaskSubmission_TaskSubmission_createdByIdToUser TaskSubmission[] @relation("TaskSubmission_createdByIdToUser")
+  TaskSubmission_TaskSubmission_createdByIdToUser TaskSubmission[]  @relation("TaskSubmission_createdByIdToUser")
   submissions                                     TaskSubmission[]
+  achievements                                    UserAchievement[]
+}
+
+model UserAchievement {
+  id       Int      @id @default(autoincrement())
+  userId   Int
+  badge    Badge
+  earnedAt DateTime @default(now())
+  user     User     @relation(fields: [userId], references: [id])
+
+  @@unique([userId, badge])
+}
+
+enum Badge {
+  PRIMEIRA_ENTREGA
+  NOTA_MAXIMA
+  CINCO_ATIVIDADES
+  ANTES_DO_PRAZO
+  ALUNO_DEDICADO
+  ESPECIALISTA
 }
 
 model Task {

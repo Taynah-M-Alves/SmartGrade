@@ -33,9 +33,12 @@ type Submission = {
   task: Activity;
 };
 
+type GamificationProfile = { xp: number; achievements: { badge: string; emoji: string; label: string }[] };
+
 export default function HomeAluno() {
   const [atividades, setAtividades] = useState<Activity[]>([]);
   const [minhasSubmissoes, setMinhasSubmissoes] = useState<Submission[]>([]);
+  const [gamification, setGamification] = useState<GamificationProfile | null>(null);
   const [loading, setLoading] = useState(true);
 
   const api = process.env.EXPO_PUBLIC_BASE_URL;
@@ -45,14 +48,16 @@ export default function HomeAluno() {
     if (!token || !user?.id) return;
     try {
       setLoading(true);
-      const [resAtiv, resSubs] = await Promise.all([
+      const [resAtiv, resSubs, resGamif] = await Promise.all([
         fetch(`${api}tasks`, { headers: { Authorization: `Bearer ${token}` } }),
         fetch(`${api}submissions/my`, { headers: { Authorization: `Bearer ${token}` } }),
+        fetch(`${api}gamification/profile`, { headers: { Authorization: `Bearer ${token}` } }),
       ]);
       const dataAtiv = await resAtiv.json();
       const dataSubs = await resSubs.json();
       if (resAtiv.ok) setAtividades(dataAtiv);
       if (resSubs.ok) setMinhasSubmissoes(dataSubs);
+      if (resGamif.ok) setGamification(await resGamif.json());
     } catch (error: any) {
       console.error('Erro ao carregar dados:', error.message);
     } finally {
@@ -100,7 +105,24 @@ export default function HomeAluno() {
               <Text style={styles.statNumber}>{atividadesPendentes.length}</Text>
               <Text style={styles.statLabel}>Pendentes</Text>
             </View>
+            <View style={styles.statDivider} />
+            <View style={styles.statBox}>
+              <Text style={styles.statNumber}>{gamification?.xp ?? 0}</Text>
+              <Text style={styles.statLabel}>XP ⚡</Text>
+            </View>
           </View>
+
+          {/* BADGES */}
+          {gamification && gamification.achievements.length > 0 && (
+            <View style={styles.badgesRow}>
+              {gamification.achievements.map((a) => (
+                <View key={a.badge} style={styles.badgeChip}>
+                  <Text style={styles.badgeEmoji}>{a.emoji}</Text>
+                  <Text style={styles.badgeLabel}>{a.label}</Text>
+                </View>
+              ))}
+            </View>
+          )}
         </LinearGradient>
 
         {/* PENDENTES */}
@@ -264,7 +286,25 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.15)',
     borderRadius: 18,
     paddingVertical: 16,
+    marginBottom: 12,
   },
+  badgesRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginTop: 4,
+  },
+  badgeChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 20,
+  },
+  badgeEmoji: { fontSize: 14 },
+  badgeLabel: { color: '#FFF', fontSize: 11, fontWeight: '600' },
   statBox: { flex: 1, alignItems: 'center' },
   statDivider: { width: 1, backgroundColor: 'rgba(255,255,255,0.2)' },
   statNumber: { color: '#FFF', fontSize: 26, fontWeight: '800' },

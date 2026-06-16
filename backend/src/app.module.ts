@@ -13,6 +13,7 @@ import { TaskCriteriaModule } from './modules/task-criteria/task-criteria.module
 import { SubmissionsModule } from './modules/submissions/submissions.module';
 
 import { AiModule } from './modules/ai/ai.module';
+import { GamificationModule } from './modules/gamification/gamification.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { AiModule } from './modules/ai/ai.module';
     TaskCriteriaModule,
     SubmissionsModule,
     AiModule,
+    GamificationModule,
   ],
 })
 export class AppModule {}

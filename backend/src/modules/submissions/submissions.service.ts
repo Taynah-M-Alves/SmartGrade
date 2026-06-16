@@ -9,6 +9,7 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
 import { PrismaService } from '../../prisma/prisma.service';
 import { AiService } from '../ai/ai.service';
+import { GamificationService } from '../gamification/gamification.service';
 
 import { PDFParse } from 'pdf-parse';
 
@@ -44,6 +45,7 @@ export class SubmissionsService {
     private readonly prisma: PrismaService,
     private readonly aiService: AiService,
     private readonly configService: ConfigService,
+    private readonly gamificationService: GamificationService,
   ) {
     const rawUrl = this.configService.get<string>('SUPABASE_URL') ?? '';
     const supabaseUrl = rawUrl.replace('/rest/v1/', '').replace(/\/$/, '');
@@ -127,14 +129,15 @@ export class SubmissionsService {
   ) {
     const aiResponse = await this.aiService.evaluateSubmission(pdfText, criteria);
 
-    await this.prisma.$transaction(async (tx) => {
-      await tx.taskSubmission.update({
+    const submission = await this.prisma.$transaction(async (tx) => {
+      const updated = await tx.taskSubmission.update({
         where: { id: submissionId },
         data: {
           aiFeedback: aiResponse.consideracoes,
           aiGrade: aiResponse.notaFinal,
           status: 'FINALIZADO',
         },
+        include: { task: true },
       });
 
       await tx.submissionCriterionFeedback.deleteMany({
@@ -154,7 +157,21 @@ export class SubmissionsService {
           },
         });
       }
+
+      return updated;
     });
+
+    // Gamificação: conceder XP e badges após avaliação da IA
+    try {
+      await this.gamificationService.processAfterEvaluation(
+        submission.userId,
+        aiResponse.notaFinal,
+        submission.createdAt,
+        submission.task.deadline,
+      );
+    } catch (err) {
+      console.error('Erro na gamificação (não bloqueia resposta):', err);
+    }
 
     return await this.findOne(submissionId);
   }
