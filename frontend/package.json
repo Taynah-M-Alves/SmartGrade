@@ -12,29 +12,29 @@
     "@expo/vector-icons": "^15.1.1",
     "@react-native-async-storage/async-storage": "2.2.0",
     "@react-native-community/datetimepicker": "8.6.0",
-    "@react-native-community/slider": "^5.2.0",
-    "@react-navigation/native": "^7.2.2",
+    "@react-navigation/native": "^7.1.33",
     "expo": "~55.0.8",
     "expo-constants": "~55.0.16",
     "expo-document-picker": "~55.0.13",
     "expo-linear-gradient": "~55.0.14",
     "expo-linking": "~55.0.15",
     "expo-router": "~55.0.16",
-    "expo-select-dropdown": "^1.2.0",
     "expo-status-bar": "~55.0.6",
-    "react": "^19.2.6",
-    "react-dom": "^19.2.6",
-    "react-native": "0.83.2",
-    "react-native-linear-gradient": "^2.8.3",
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
+    "react-native": "0.83.6",
     "react-native-safe-area-context": "~5.6.2",
-    "react-native-screens": "~4.23.0",
-    "react-native-vector-icons": "^10.3.0",
-    "styled-components": "^6.4.1"
+    "react-native-screens": "~4.23.0"
   },
   "devDependencies": {
     "@types/react": "~19.2.2",
-    "@types/styled-components-react-native": "^5.2.5",
+    "babel-plugin-module-resolver": "^5.0.2",
     "typescript": "~5.9.2"
+  },
+  "resolutions": {
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
+    "react-native": "0.83.6"
   },
   "private": true
 }
