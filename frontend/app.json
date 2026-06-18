@@ -20,10 +20,8 @@
       "package": "com.smartgrade.app",
       "versionCode": 1,
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/android-icon-foreground.png",
-        "backgroundImage": "./assets/android-icon-background.png",
-        "monochromeImage": "./assets/android-icon-monochrome.png"
+        "backgroundColor": "#5A4AF4",
+        "foregroundImage": "./assets/logoCapelo.png"
       },
       "predictiveBackGestureEnabled": false
     },
