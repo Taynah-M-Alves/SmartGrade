@@ -4,6 +4,7 @@
     "slug": "smartgrade",
     "scheme": "smartgrade",
     "version": "1.0.0",
+    "newArchEnabled": false,
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -33,6 +34,12 @@
       "expo-router",
       "expo-font",
       "@react-native-community/datetimepicker"
-    ]
+    ],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "4f88e0a5-b73c-4f26-b4bf-e1d3eb2dee21"
+      }
+    }
   }
 }
